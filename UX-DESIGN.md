@@ -16,11 +16,11 @@ The welcome screen introduces users to Moodsphere and provides entry points to s
 Users can sign up using email and password.
 
 ### 3. Log In
-![Log In Screen](ux-design/Log_In_.png)
+![Log In Screen](ux-design/Log_In.png)
 Users can log in using email and password.
 
 ### 4. Home / Dashboard
-![Home Screen](ux-design/User_Dashboard_.png)
+![Home Screen](ux-design/User_Dashboard.png)
 Users can add daily reflection, view ball with varying colors based on mood, add journal entry, view entries, or listen to a calming playlist.
 
 ### 5. Reflection
