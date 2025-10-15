@@ -56,7 +56,7 @@ Users can choose from multiple playlists and listen to one based on their mood.
 
 Users can choose from 8 different moods and log one for their journal entry.
 
-### 8. Mood Logger
+### 8. Journal Entry
 ![Entry Screen](ux-design/Mood_Entry.png)
 
 
