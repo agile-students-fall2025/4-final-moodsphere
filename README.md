@@ -10,7 +10,15 @@ Our vision is to create a digital space that empowers users to understand their 
 - [Sarah]('ADD LINK')
 
 ## Project History 
-Moodsphere is inspired and is being created by a team of students passionate about improving mental health through technology. Our goal is to design a platform that encourages emotional reflection and community support while making mood tracking easy and meaningful. 
+MoodSphere was conceived as part of an academic project by a team of students who share a deep interest in mental health awareness and digital innovation. The idea emerged from recognizing how many people—especially students—struggle to process emotions in fast-paced, online environments that often lack genuine support.
+Our team wanted to build something more personal than a standard journaling app. We envisioned a digital space where users could not only log their moods and reflections but also see meaningful insights into their emotional patterns and, if they choose, share those experiences with trusted peers.
+The project combines the principles of psychology, user-centered design, and data visualization to promote mindfulness and emotional intelligence. From its initial brainstorming phase, MoodSphere has evolved through iterative sprints focused on research, wireframing, and prototype testing—all aimed at ensuring that the platform feels intuitive, safe, and empowering. Ultimately, MoodSphere represents our collective goal: to make mental-health tracking approachable, social, and supportive, while encouraging people to understand themselves and connect through shared experiences.
+
+## Prototype
+[Figma Clickable Prototype](https://www.figma.com/proto/3CaJtOCcUR7DTozlQJKRfE/Moodsphere?node-id=10-4&starting-point-node-id=10%3A4&t=SmiLEDxiCU7oBWvi-1)
+
+## How to Contribute 
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
 ## Build and Test Instructions 
 Installation, build, and testing steps will be added throughout the project's timeline 
