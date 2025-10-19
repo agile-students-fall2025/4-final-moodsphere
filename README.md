@@ -7,7 +7,7 @@ Our vision is to create a digital space that empowers users to understand their 
 - [Preston Lee](https://github.com/prestonglee0805)
 - [Samay Dhawan](https://github.com/samaythe1)
 - [Siyansh Balyan](https://github.com/sb8520)
-- [Sarah]('ADD LINK')
+- [Sarah Randhawa](https://github.com/sarahrandhawa)
 
 ## Project History 
 MoodSphere was conceived as part of an academic project by a team of students who share a deep interest in mental health awareness and digital innovation. The idea emerged from recognizing how many people—especially students—struggle to process emotions in fast-paced, online environments that often lack genuine support.
