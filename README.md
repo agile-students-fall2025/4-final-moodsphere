@@ -1,19 +1,18 @@
-# Project Repository
+# Moodsphere: A Social Mood Journal 
+Moodsphere is a mobile-friendly web application that helps users track their emotions, reflect on their mental well-being, and connect with friends and peers for support. Mental health challenges are incredibly common, yet many people struggle to find safe and accessible ways to express how they feel. Moodsphere provides an easy and supportive space to log moods, visualize emotional patterns, and share experiences within a trusted network. 
+Our vision is to create a digital space that empowers users to understand their emotions and strengthen community support through self-reflection and shared well-being. We aim to make emotional wellness approachable, trackable, and socially connected.
 
-This repository will be used for team projects.
+## Collaborators
+- [Aaqila Patel](https://github.com/aaqilap)
+- [Preston Lee](https://github.com/prestonglee0805)
+- [Samay Dhawan](https://github.com/samaythe1)
+- [Siyansh Balyan](https://github.com/sb8520)
+- [Sarah]('ADD LINK')
 
-Several sets of instructions are included in this repository. They should each be treated as separate assignments with their own due dates and sets of requirements.
+## Project History 
+Moodsphere is inspired and is being created by a team of students passionate about improving mental health through technology. Our goal is to design a platform that encourages emotional reflection and community support while making mood tracking easy and meaningful. 
 
-1. See the [App Map & Wireframes](instructions-0a-app-map-wireframes.md) and [Prototyping](./instructions-0b-prototyping.md) instructions for the requirements of the initial user experience design of the app.
+## Build and Test Instructions 
+Installation, build, and testing steps will be added throughout the project's timeline 
 
-1. Delete the contents of this file and replace with the contents of a proper README.md, as described in the [project setup instructions](./instructions-0c-project-setup.md)
 
-1. See the [Sprint Planning instructions](instructions-0d-sprint-planning.md) for the requirements of Sprint Planning for each Sprint.
-
-1. See the [Front-End Development instructions](./instructions-1-front-end.md) for the requirements of the initial Front-End Development.
-
-1. See the [Back-End Development instructions](./instructions-2-back-end.md) for the requirements of the initial Back-End Development.
-
-1. See the [Database Integration instructions](./instructions-3-database.md) for the requirements of integrating a database into the back-end.
-
-1. See the [Deployment instructions](./instructions-4-deployment.md) for the requirements of deploying an app.
