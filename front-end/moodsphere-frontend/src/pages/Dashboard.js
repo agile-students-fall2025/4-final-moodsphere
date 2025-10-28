@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import Calendar from '../components/Calendar';
+=======
+>>>>>>> f97329d (Add View Journal Entries page and styling for the page)
 import './Dashboard.css';
 
 function Dashboard() {
@@ -35,18 +38,16 @@ function Dashboard() {
   ]);
 
   const handleLogMood = () => {
-    // Will be implemented later
     console.log('Log Mood clicked');
   };
 
   const handleJournalEntry = () => {
-    // Will be implemented later
     console.log('Journal Entry clicked');
   };
 
+  // Updated to navigate to ViewEntry page
   const handleViewJournal = () => {
-    // Will be implemented later
-    console.log('View Journal Entries clicked');
+    navigate("/view-entry");
   };
 
   const handleChat = () => {
@@ -54,7 +55,6 @@ function Dashboard() {
   };
 
   const handleWriteReflection = () => {
-    // Will be implemented later
     console.log('Write Reflection clicked');
   };
 

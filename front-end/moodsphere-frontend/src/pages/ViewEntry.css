@@ -1,0 +1,165 @@
+body, .journal-page {
+  background: #f5f7fa;
+}
+
+/* Page container */
+.journal-page {
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', Arial, sans-serif;
+  background: linear-gradient(133deg, #f5f7fa 0%, #e8ecf1 100%);
+}
+
+/* Header */
+.journal-header {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  padding: 20px 28px 10px 28px;
+  gap: 12px;
+}
+
+.back-btn {
+  font-size: 1.12rem;
+  background: #f9fafb;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 0.5rem 1.3rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.back-btn:hover {
+  background: #e5e7eb;
+}
+
+.journal-title {
+  margin-left: 10px;
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: #1a2533;
+}
+
+/* Filter */
+.journal-filter {
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+}
+.journal-filter label {
+  color: #6b7280;
+  font-size: 1rem;
+}
+.journal-select {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 4px 11px;
+  color: #3a4a5a;
+  background: #fff;
+  font-size: 1rem;
+}
+
+/* Journal List */
+.journal-list {
+  padding: 24px 32px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Card styling */
+.journal-card {
+  background: #fff;
+  border-radius: 19px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(43, 65, 109, 0.05);
+  display: flex;
+  flex-direction: column;
+  padding: 22px;
+  transition: box-shadow 0.2s;
+}
+.journal-card:hover {
+  box-shadow: 0 4px 18px rgba(44, 62, 80, 0.09);
+}
+
+/* Card Content Flex */
+.card-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 19px;
+}
+
+/* Mood square and coloring */
+.mood-square {
+  width: 52px;
+  height: 52px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #c5e5cd;
+  margin-right: 0px;
+}
+
+.mood-green {
+  background: #e1fbe6;
+  border-color: #a8e6bf;
+}
+.mood-yellow {
+  background: #fff8d5;
+  border-color: #ffe293;
+}
+.mood-blue {
+  background: #e7f6ff;
+  border-color: #88c5ea;
+}
+.mood-indigo {
+  background: #ecebff;
+  border-color: #8a90d3;
+}
+.mood-purple {
+  background: #f1e7fe;
+  border-color: #c3b3e9;
+}
+.mood-red {
+  background: #ffdddd;
+  border-color: #ffc2c2;
+}
+.mood-gray {
+  background: #f6f6f7;
+  border-color: #dadbde;
+}
+.mood-slate {
+  background: #ebf2f6;
+  border-color: #b8c3cc;
+}
+
+/* Mood emoji */
+.mood-emoji {
+  font-size: 2.1rem;
+  margin-top: 1px;
+}
+
+/* Card main content */
+.card-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.card-mood-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 3px;
+}
+.card-mood {
+  color: #19233f;
+  font-weight: 500;
+  font-size:
+}
