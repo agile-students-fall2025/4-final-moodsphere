@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
 import Calendar from '../components/Calendar';
-=======
->>>>>>> f97329d (Add View Journal Entries page and styling for the page)
 import './Dashboard.css';
 
 function Dashboard() {
