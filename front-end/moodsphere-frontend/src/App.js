@@ -3,6 +3,9 @@ import './App.css';
 import LandingPage from './pages/LandingPage';
 import AuthPage from './pages/AuthPage';
 import Dashboard from './pages/Dashboard';
+import Contacts from './pages/Contacts';
+import Chat from './pages/Chat';
+import JournalEntry from './pages/JournalEntry';
 
 function App() {
   return (
@@ -12,6 +15,9 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/contacts" element={<Contacts />} />
+          <Route path="/chat/:contactId" element={<Chat />} />
+          <Route path="/journal/:date" element={<JournalEntry />} />
         </Routes>
       </div>
     </Router>

@@ -1,7 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Calendar from '../components/Calendar';
 import './Dashboard.css';
 
 function Dashboard() {
+  const navigate = useNavigate();
+
   const [currentMood] = useState({
     emoji: '😊',
     label: 'Calm',
@@ -18,6 +22,18 @@ function Dashboard() {
 
   const [reflectionPrompt] = useState("What is one thing you're grateful for today?");
 
+  // Sample journal dates - dates when user wrote journal entries
+  const [journalDates] = useState([
+    '2025-10-01',
+    '2025-10-05',
+    '2025-10-12',
+    '2025-10-15',
+    '2025-10-18',
+    '2025-10-22',
+    '2025-10-25',
+    '2025-10-28',
+  ]);
+
   const handleLogMood = () => {
     // Will be implemented later
     console.log('Log Mood clicked');
@@ -31,6 +47,10 @@ function Dashboard() {
   const handleViewJournal = () => {
     // Will be implemented later
     console.log('View Journal Entries clicked');
+  };
+
+  const handleChat = () => {
+    navigate('/contacts');
   };
 
   const handleWriteReflection = () => {
@@ -91,7 +111,18 @@ function Dashboard() {
                 <span className="action-icon">📖</span>
                 <span className="action-text">View Journal Entries</span>
               </button>
+              <button className="action-button" onClick={handleChat}>
+                <span className="action-icon">💬</span>
+                <span className="action-text">Chat with Friends</span>
+              </button>
             </div>
+          </div>
+
+          {/* Journal Calendar */}
+          <div className="calendar-section">
+            <h2 className="card-title">Journal Calendar</h2>
+            <p className="card-subtitle">Track your journaling journey</p>
+            <Calendar journalDates={journalDates} />
           </div>
         </div>
       </div>
