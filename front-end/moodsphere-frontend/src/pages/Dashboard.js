@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Calendar from '../components/Calendar';
 import './Dashboard.css';
 
-function Dashboard() {
+export default function Dashboard() {
   const navigate = useNavigate();
 
   const [currentMood] = useState({
@@ -21,38 +21,18 @@ function Dashboard() {
   });
 
   const [reflectionPrompt] = useState("What is one thing you're grateful for today?");
-
-  // Sample journal dates - dates when user wrote journal entries
   const [journalDates] = useState([
-    '2025-10-01',
-    '2025-10-05',
-    '2025-10-12',
-    '2025-10-15',
-    '2025-10-18',
-    '2025-10-22',
-    '2025-10-25',
-    '2025-10-28',
+    '2025-10-01', '2025-10-05', '2025-10-12', '2025-10-15',
+    '2025-10-18', '2025-10-22', '2025-10-25', '2025-10-28',
   ]);
 
-  const handleLogMood = () => {
-    console.log('Log Mood clicked');
-  };
-
-  const handleJournalEntry = () => {
-    console.log('Journal Entry clicked');
-  };
-
-  // Updated to navigate to ViewEntry page
-  const handleViewJournal = () => {
-    navigate("/view-entry");
-  };
-
-  const handleChat = () => {
-    navigate('/contacts');
-  };
-
+  const handleLogMood = () => navigate('/log-mood');
+  const handleJournalEntry = () => navigate('/journal-editor');
+  const handleViewJournal = () => navigate('/view-entry');
+  const handleChat = () => navigate('/contacts');
   const handleWriteReflection = () => {
-    console.log('Write Reflection clicked');
+    // stub — you can navigate to a reflection page later
+    alert('Reflection coming soon!');
   };
 
   return (
@@ -126,5 +106,3 @@ function Dashboard() {
     </div>
   );
 }
-
-export default Dashboard;
