@@ -21,6 +21,48 @@ The project combines the principles of psychology, user-centered design, and dat
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
 ## Build and Test Instructions 
-Installation, build, and testing steps will be added throughout the project's timeline 
+
+### Front-End SetUp and Run Instructions
+The front-end of Moodsphere is built with **React.js** using functional components and JSX syntax. To run the app locally, follow the steps below. 
+
+#### 1. Clone the repository 
+```bash
+git clone https://github.com/agile-students-fall2025/4-final-moodsphere.git
+cd 4-final-moodsphere/front-end
+```
+
+#### 2. Install dependencies 
+Make sure you have Node.js v18+ and npm v9+ installed. 
+
+```bash
+npm install 
+```
+
+#### 3. Run the development server 
+```bash
+npm start 
+```
+The app will open automatically at: http://localhost:3000
+
+#### 4. Build for production
+To create an optimized production build: 
+```bash
+npm run build  
+```
+
+#### 5. Environment Variables
+None required to run the front-end for **Sprint 1**.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
