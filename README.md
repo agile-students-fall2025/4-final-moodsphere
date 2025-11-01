@@ -17,6 +17,20 @@ The project combines the principles of psychology, user-centered design, and dat
 ## Prototype
 [Figma Clickable Prototype](https://www.figma.com/proto/3CaJtOCcUR7DTozlQJKRfE/Moodsphere?node-id=10-4&starting-point-node-id=10%3A4&t=SmiLEDxiCU7oBWvi-1)
 
+## Current State of Project - Sprint 1 
+Front-end UI is implemented in **React (function components + JSX)** and runs locally with `npm start`. The following screens/flows are in place:
+
+- **Auth Screens:** Login and Sign-Up pages scaffolded (non-functional for now).
+- **Dashboard:** 
+  - **Daily Reflection** text area with a **time-of-day prompt** that changes throughout the day.
+  - **Current Mood** with the **Moodsphere** emoji display that updates based on user selection.
+- **Mood & Journal Pages:** 
+  - **Log Mood** page (select + update).
+  - **Journal Entry** page (compose and save to in-memory view).
+  - **View Journal Entries** page (lists prior entries within the session).
+- **Social:** **Chat with Friends** screen UI scaffolded.
+- **Journal Calendar:** Calendar UI that highlights dates with journal entries (session-level/in-memory).
+
 ## How to Contribute 
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
