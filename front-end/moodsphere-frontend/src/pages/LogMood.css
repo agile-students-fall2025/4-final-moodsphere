@@ -1,0 +1,370 @@
+/* Main Page Container - Matches Chat aesthetic */
+.log-mood-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.log-mood-container {
+  width: 100%;
+  max-width: 800px;
+  height: 90vh;
+  max-height: 750px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header Section - Gradient like Chat */
+.log-mood-header {
+  background: linear-gradient(135deg, #A7C7E7, #88D1C2);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.mood-back-button {
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  font-size: 1.5rem;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mood-back-button:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: translateX(-4px);
+}
+
+.mood-header-content {
+  flex: 1;
+}
+
+.log-mood-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 0.25rem 0;
+}
+
+.log-mood-subtitle {
+  font-size: 0.95rem;
+  color: #5a6c7d;
+  margin: 0;
+}
+
+/* Content Area - Scrollable like Chat messages */
+.log-mood-content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem 1.5rem;
+  background: #f8f9fa;
+}
+
+/* Form Styling */
+.mood-form {
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+.mood-section {
+  background: white;
+  border-radius: 18px;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e4e8;
+}
+
+.mood-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+}
+
+.optional-text {
+  font-weight: 400;
+  color: #9ca8b4;
+  font-size: 0.9rem;
+}
+
+/* Mood Selection Grid */
+.mood-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.875rem;
+}
+
+.mood-choice-btn {
+  background: white;
+  border: 1px solid #e0e4e8;
+  border-radius: 14px;
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.mood-choice-btn:hover {
+  border-color: #A7C7E7;
+  background: #f8f9fa;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(167, 199, 231, 0.2);
+}
+
+.mood-choice-btn.mood-choice-selected {
+  background: linear-gradient(135deg, #A7C7E7, #88D1C2);
+  border-color: #A7C7E7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(167, 199, 231, 0.4);
+}
+
+.mood-choice-emoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.mood-choice-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #5a6c7d;
+}
+
+.mood-choice-btn.mood-choice-selected .mood-choice-label {
+  color: #2c3e50;
+}
+
+/* Textarea */
+.mood-note-textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #e0e4e8;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #2c3e50;
+  font-family: inherit;
+  resize: vertical;
+  line-height: 1.6;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.mood-note-textarea:focus {
+  outline: none;
+  border-color: #A7C7E7;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(167, 199, 231, 0.1);
+}
+
+.mood-note-textarea::placeholder {
+  color: #9ca8b4;
+}
+
+/* Action Buttons */
+.mood-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  background: white;
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e4e8;
+}
+
+.mood-btn-cancel {
+  background: white;
+  color: #5a6c7d;
+  border: 1px solid #e0e4e8;
+  border-radius: 50px;
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mood-btn-cancel:hover {
+  border-color: #A7C7E7;
+  color: #2c3e50;
+  background: #f8f9fa;
+}
+
+.mood-btn-save {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 0.875rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(44, 62, 80, 0.2);
+}
+
+.mood-btn-save:hover:not(:disabled) {
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(44, 62, 80, 0.3);
+}
+
+.mood-btn-save:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(44, 62, 80, 0.2);
+}
+
+.mood-btn-save:disabled {
+  background: #e0e4e8;
+  color: #9ca8b4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Scrollbar Styling */
+.log-mood-content-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.log-mood-content-area::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.log-mood-content-area::-webkit-scrollbar-thumb {
+  background: #A7C7E7;
+  border-radius: 10px;
+}
+
+.log-mood-content-area::-webkit-scrollbar-thumb:hover {
+  background: #88D1C2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .log-mood-page {
+    padding: 0;
+  }
+
+  .log-mood-container {
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .log-mood-header {
+    padding: 1rem;
+  }
+
+  .log-mood-title {
+    font-size: 1.25rem;
+  }
+
+  .log-mood-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .log-mood-content-area {
+    padding: 1.5rem 1rem;
+  }
+
+  .mood-section {
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .mood-selection-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .mood-choice-btn {
+    padding: 0.875rem 0.625rem;
+  }
+
+  .mood-choice-emoji {
+    font-size: 1.75rem;
+  }
+
+  .mood-choice-label {
+    font-size: 0.85rem;
+  }
+
+  .mood-actions {
+    flex-direction: column-reverse;
+    padding: 1.25rem;
+  }
+
+  .mood-btn-cancel,
+  .mood-btn-save {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mood-back-button {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+
+  .log-mood-title {
+    font-size: 1.125rem;
+  }
+
+  .log-mood-content-area {
+    padding: 1rem;
+  }
+
+  .mood-section {
+    padding: 1rem;
+  }
+
+  .mood-section-title {
+    font-size: 1rem;
+  }
+
+  .mood-choice-emoji {
+    font-size: 1.5rem;
+  }
+
+  .mood-choice-label {
+    font-size: 0.8rem;
+  }
+
+  .mood-note-textarea {
+    padding: 0.875rem;
+  }
+
+  .mood-actions {
+    padding: 1rem;
+  }
+
+  .mood-btn-cancel,
+  .mood-btn-save {
+    font-size: 0.95rem;
+  }
+}
