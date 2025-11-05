@@ -4,10 +4,13 @@ export const moodMap = {
   'Excited': '🤩',
   'Calm': '😌',
   'Sad': '😢',
+  'Burnt Out': '🫩'
   'Anxious': '😰',
   'Angry': '😠',
   'Tired': '😴',
   'Neutral': '😐',
+  'Annoyed': '🙄',
+  'Excited': '🥳',
 };
 
 export const colorMap = {
