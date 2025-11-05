@@ -1,16 +1,19 @@
 // src/utils/moodHelpers.js
+
 export const moodMap = {
   'Happy': '😊',
   'Excited': '🤩',
   'Calm': '😌',
   'Sad': '😢',
-  'Burnt Out': '🫩'
+  'Burnt Out': '🫩',
   'Anxious': '😰',
   'Angry': '😠',
   'Tired': '😴',
   'Neutral': '😐',
   'Annoyed': '🙄',
-  'Excited': '🥳',
+  'Inspired': '🌟',
+  'Stressed': '😩',
+  'Grateful': '🙏',
 };
 
 export const colorMap = {
@@ -22,6 +25,11 @@ export const colorMap = {
   'Angry': 'mood-red',
   'Tired': 'mood-gray',
   'Neutral': 'mood-slate',
+  'Burnt Out': 'mood-brown',
+  'Annoyed': 'mood-pink',
+  'Inspired': 'mood-gold',
+  'Stressed': 'mood-orange',
+  'Grateful': 'mood-teal',
 };
 
 export function getMoodEmoji(mood) {
