@@ -2,33 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ViewEntry.css';
 
-// Utility: emoji and color helpers
-const moodMap = {
-  'Happy': '😊',
-  'Excited': '🤩',
-  'Calm': '😌',
-  'Sad': '😢',
-  'Anxious': '😰',
-  'Angry': '😠',
-  'Tired': '😴',
-  'Neutral': '😐',
-};
-const colorMap = {
-  'Happy': 'mood-green',
-  'Excited': 'mood-yellow',
-  'Calm': 'mood-blue',
-  'Sad': 'mood-indigo',
-  'Anxious': 'mood-purple',
-  'Angry': 'mood-red',
-  'Tired': 'mood-gray',
-  'Neutral': 'mood-slate',
-};
-function getMoodEmoji(mood) {
-  return moodMap[mood] || '😊';
-}
-function getMoodColor(mood) {
-  return colorMap[mood] || 'mood-gray';
-}
+import { getMoodEmoji, getMoodColor } from '../utils/moodHelpers';
+
 
 // Sample entries for demo. Replace with your passed-in props.
 const defaultEntries = [
