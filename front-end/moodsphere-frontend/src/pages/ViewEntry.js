@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ViewEntry.css';
-
 import { getMoodEmoji, getMoodColor } from '../utils/moodHelpers';
 
-
-// Sample entries for demo. Replace with your passed-in props.
 const defaultEntries = [
   {
     id: 1,
@@ -30,6 +27,30 @@ const defaultEntries = [
     time: '3:45 PM',
     note: 'Feeling worried about upcoming presentation.',
     playlist: true
+  },
+  {
+    id: 4,
+    mood: 'Inspired',
+    date: 'Oct 10, 2025',
+    time: '10:00 AM',
+    note: 'Had a burst of creativity during brainstorming!',
+    playlist: false
+  },
+  {
+    id: 5,
+    mood: 'Stressed',
+    date: 'Oct 9, 2025',
+    time: '6:30 PM',
+    note: 'Too many deadlines piling up 😩',
+    playlist: false
+  },
+  {
+    id: 6,
+    mood: 'Grateful',
+    date: 'Oct 8, 2025',
+    time: '9:15 PM',
+    note: 'So thankful for my supportive friends and family.',
+    playlist: false
   }
 ];
 
@@ -42,12 +63,15 @@ export default function ViewEntry({ entries = defaultEntries }) {
       ? entries
       : entries.filter(entry => entry.mood === filterMood);
 
+  const clearFilter = () => setFilterMood('all');
+
   return (
     <div className="journal-page">
       <div className="journal-header">
         <button className="back-btn" onClick={() => navigate('/dashboard')}>← Back</button>
         <h2 className="journal-title">My Journal</h2>
       </div>
+
       <div className="journal-filter">
         <label>Filter:</label>
         <select
@@ -64,8 +88,18 @@ export default function ViewEntry({ entries = defaultEntries }) {
           <option value="Angry">Angry</option>
           <option value="Tired">Tired</option>
           <option value="Neutral">Neutral</option>
+          <option value="Burnt Out">Burnt Out</option>
+          <option value="Annoyed">Annoyed</option>
+          <option value="Inspired">Inspired</option>
+          <option value="Stressed">Stressed</option>
+          <option value="Grateful">Grateful</option>
         </select>
+
+        {filterMood !== 'all' && (
+          <button className="clear-btn" onClick={clearFilter}>Clear Filter</button>
+        )}
       </div>
+
       <div className="journal-list">
         {filteredEntries.length === 0 ? (
           <div className="no-entries">

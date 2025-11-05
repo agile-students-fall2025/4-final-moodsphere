@@ -65,9 +65,23 @@ body, .journal-page {
   font-size: 1rem;
 }
 
+.clear-btn {
+  border: none;
+  background: #e5e7eb;
+  color: #374151;
+  border-radius: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.clear-btn:hover {
+  background: #d1d5db;
+}
+
 /* Journal List */
 .journal-list {
-  padding: 24px 32px 24px 32px;
+  padding: 24px 32px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -88,14 +102,13 @@ body, .journal-page {
   box-shadow: 0 4px 18px rgba(44, 62, 80, 0.09);
 }
 
-/* Card Content Flex */
 .card-content {
   display: flex;
   align-items: flex-start;
   gap: 19px;
 }
 
-/* Mood square and coloring */
+/* Mood square and colors */
 .mood-square {
   width: 52px;
   height: 52px;
@@ -104,49 +117,28 @@ body, .journal-page {
   align-items: center;
   justify-content: center;
   border: 2px solid #c5e5cd;
-  margin-right: 0px;
 }
 
-.mood-green {
-  background: #e1fbe6;
-  border-color: #a8e6bf;
-}
-.mood-yellow {
-  background: #fff8d5;
-  border-color: #ffe293;
-}
-.mood-blue {
-  background: #e7f6ff;
-  border-color: #88c5ea;
-}
-.mood-indigo {
-  background: #ecebff;
-  border-color: #8a90d3;
-}
-.mood-purple {
-  background: #f1e7fe;
-  border-color: #c3b3e9;
-}
-.mood-red {
-  background: #ffdddd;
-  border-color: #ffc2c2;
-}
-.mood-gray {
-  background: #f6f6f7;
-  border-color: #dadbde;
-}
-.mood-slate {
-  background: #ebf2f6;
-  border-color: #b8c3cc;
-}
+.mood-green { background: #e1fbe6; border-color: #a8e6bf; }
+.mood-yellow { background: #fff8d5; border-color: #ffe293; }
+.mood-blue { background: #e7f6ff; border-color: #88c5ea; }
+.mood-indigo { background: #ecebff; border-color: #8a90d3; }
+.mood-purple { background: #f1e7fe; border-color: #c3b3e9; }
+.mood-red { background: #ffdddd; border-color: #ffc2c2; }
+.mood-gray { background: #f6f6f7; border-color: #dadbde; }
+.mood-slate { background: #ebf2f6; border-color: #b8c3cc; }
+.mood-brown { background: #f8efe6; border-color: #e2c6a5; }
+.mood-pink { background: #ffe6f0; border-color: #f9bcd2; }
+.mood-gold { background: #fff3d4; border-color: #ffd76a; }
+.mood-orange { background: #ffe8d9; border-color: #ffb88c; }
+.mood-teal { background: #dff7f3; border-color: #9ee1d1; }
 
-/* Mood emoji */
 .mood-emoji {
   font-size: 2.1rem;
   margin-top: 1px;
 }
 
-/* Card main content */
+/* Card main */
 .card-main {
   display: flex;
   flex-direction: column;
@@ -161,5 +153,26 @@ body, .journal-page {
 .card-mood {
   color: #19233f;
   font-weight: 500;
-  font-size:
+  font-size: 1.05rem;
+}
+.card-date {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+.card-desc {
+  font-size: 0.98rem;
+  color: #374151;
+  line-height: 1.4;
+}
+
+/* Empty state */
+.no-entries {
+  text-align: center;
+  color: #6b7280;
+  margin-top: 60px;
+}
+.no-entries-sub {
+  font-size: 0.9rem;
+  color: #9ca3af;
 }
