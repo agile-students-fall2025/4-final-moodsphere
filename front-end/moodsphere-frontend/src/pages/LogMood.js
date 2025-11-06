@@ -16,13 +16,43 @@ const MOODS = [
 export default function LogMood() {
   const navigate = useNavigate();
   const [mood, setMood] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: replace with real API call
-    console.log("SAVE MOOD", { mood, at: new Date().toISOString() });
-    alert("Mood saved!");
-    navigate("/dashboard");
+    if (!mood) return;
+
+    setIsSaving(true);
+    setError("");
+
+    try {
+      const response = await fetch("http://localhost:5001/api/moods", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mood,
+          loggedAt: new Date().toISOString(), // send timestamp
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save mood");
+      }
+
+      const data = await response.json();
+      console.log("Saved mood:", data);
+
+      alert("Mood saved!");
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong saving your mood. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleBack = () => {
@@ -50,11 +80,13 @@ export default function LogMood() {
             <div className="mood-section">
               <h3 className="mood-section-title">Select your mood</h3>
               <div className="mood-selection-grid">
-                {MOODS.map(m => (
+                {MOODS.map((m) => (
                   <button
                     key={m.key}
                     type="button"
-                    className={`mood-choice-btn ${mood === m.key ? "mood-choice-selected" : ""}`}
+                    className={`mood-choice-btn ${
+                      mood === m.key ? "mood-choice-selected" : ""
+                    }`}
                     onClick={() => setMood(m.key)}
                     aria-pressed={mood === m.key}
                   >
@@ -65,13 +97,24 @@ export default function LogMood() {
               </div>
             </div>
 
+            {error && <p className="mood-error">{error}</p>}
+
             {/* Action Buttons */}
             <div className="mood-actions">
-              <button type="button" onClick={handleBack} className="mood-btn-cancel">
+              <button
+                type="button"
+                onClick={handleBack}
+                className="mood-btn-cancel"
+                disabled={isSaving}
+              >
                 Cancel
               </button>
-              <button type="submit" disabled={!mood} className="mood-btn-save">
-                Save Mood
+              <button
+                type="submit"
+                disabled={!mood || isSaving}
+                className="mood-btn-save"
+              >
+                {isSaving ? "Saving..." : "Save Mood"}
               </button>
             </div>
           </form>
