@@ -10,6 +10,7 @@ app.use(express.json());
 // mock in-memory data for now will fix when implementing database
 let moods = [];
 let entries = []; //for journal entry route
+let users = []; // for auth routes
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -48,7 +49,7 @@ app.get('/api/entries', (req, res) => {
 });
 
 app.post ('/api/entries', (req, res) => {
-  const { title, content, createdAt } = req.body; 
+  const { title, content, createdAt } = req.body;
 
   if (!content) {
     return res.status(400).json({ error: 'Content is required' });
@@ -63,6 +64,92 @@ app.post ('/api/entries', (req, res) => {
 
   entries.push(newEntry);
   res.status(201).json(newEntry);
+});
+
+// Auth routes
+app.post('/api/auth/signup', (req, res) => {
+  const { name, email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  // Check if user already exists
+  const existingUser = users.find(u => u.email === email);
+  if (existingUser) {
+    return res.status(409).json({ error: 'User already exists' });
+  }
+
+  const newUser = {
+    id: String(users.length + 1),
+    name: name || 'Anonymous',
+    email,
+    password, // In real app, this would be hashed
+    createdAt: new Date().toISOString(),
+  };
+
+  users.push(newUser);
+
+  // Return user without password
+  const { password: _, ...userWithoutPassword } = newUser;
+  res.status(201).json({
+    message: 'User created successfully',
+    user: userWithoutPassword,
+  });
+});
+
+app.post('/api/auth/login', (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  // Find user by email
+  const user = users.find(u => u.email === email);
+
+  if (!user || user.password !== password) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+
+  // Return user without password
+  const { password: _, ...userWithoutPassword } = user;
+  res.status(200).json({
+    message: 'Login successful',
+    user: userWithoutPassword,
+  });
+});
+
+// Sign out route
+app.post('/api/auth/signout', (req, res) => {
+  // In a real app with sessions/tokens, we would invalidate the session here
+  // For now, just return a success message
+  res.status(200).json({
+    message: 'Sign out successful'
+  });
+});
+
+// Calendar route - returns dates with mood/journal entries
+app.get('/api/calendar', (req, res) => {
+  // Get unique dates from moods
+  const moodDates = moods.map(mood => {
+    const date = new Date(mood.loggedAt);
+    return date.toISOString().split('T')[0];
+  });
+
+  // Get unique dates from entries
+  const entryDates = entries.map(entry => {
+    const date = new Date(entry.createdAt);
+    return date.toISOString().split('T')[0];
+  });
+
+  // Combine and deduplicate dates
+  const allDates = [...new Set([...moodDates, ...entryDates])];
+
+  res.json({
+    dates: allDates.sort(),
+    count: allDates.length
+  });
 });
 
 if (require.main === module) {

@@ -67,6 +67,116 @@ npm run build
 #### 5. Environment Variables
 None required to run the front-end for **Sprint 1**.
 
+---
+
+### Back-End Setup and Run Instructions
+The back-end of Moodsphere is built with **Express.js** and provides RESTful API endpoints for authentication, mood tracking, journal entries, and calendar data.
+
+#### 1. Navigate to the back-end directory
+```bash
+cd /Users/prestonlee/Desktop/Agile/4-final-moodsphere/back-end
+```
+
+#### 2. Install dependencies
+Make sure you have Node.js v18+ and npm v9+ installed.
+
+```bash
+npm install
+```
+
+This installs:
+- **express** - Web framework
+- **cors** - Cross-origin resource sharing
+- **mocha** - Test framework (dev)
+- **chai** - Assertion library (dev)
+- **supertest** - HTTP testing (dev)
+- **c8** - Code coverage tool (dev)
+
+#### 3. Start the development server
+```bash
+npm start
+```
+
+The backend server will start at: **http://localhost:5001**
+
+You should see: `Moodsphere backend listening on http://localhost:5001`
+
+#### 4. Available API Endpoints
+
+**Authentication:**
+- `POST /api/auth/signup` - Create new user account
+- `POST /api/auth/login` - Login existing user
+- `POST /api/auth/signout` - Sign out user
+
+**Moods:**
+- `POST /api/moods` - Log a new mood
+- `GET /api/moods` - Get all moods
+
+**Journal Entries:**
+- `POST /api/entries` - Create a journal entry
+- `GET /api/entries` - Get all journal entries
+
+**Calendar:**
+- `GET /api/calendar` - Get dates with mood/journal entries
+
+**Health Check:**
+- `GET /api/health` - Check server status
+
+#### 5. Running Tests
+Run all unit tests with mocha:
+```bash
+npm test
+```
+
+Run tests with code coverage report:
+```bash
+npm run coverage
+```
+
+The coverage report shows the percentage of code covered by tests. The project meets the requirement of **10%+ code coverage**.
+
+#### 6. Testing the API Manually
+
+You can test endpoints using curl:
+
+**Test Signup:**
+```bash
+curl -X POST http://localhost:5001/api/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"name":"John Doe","email":"john@example.com","password":"password123"}'
+```
+
+**Test Login:**
+```bash
+curl -X POST http://localhost:5001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"john@example.com","password":"password123"}'
+```
+
+**Test Calendar:**
+```bash
+curl http://localhost:5001/api/calendar
+```
+
+#### 7. Environment Variables
+None required for **Sprint 2**. Mock data is stored in-memory and will be replaced with a database in Sprint 3.
+
+#### 8. Running Front-End and Back-End Together
+
+**Terminal 1 - Backend:**
+```bash
+cd back-end
+npm start
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd front-end/moodsphere-frontend
+npm start
+```
+
+The frontend will automatically connect to the backend at `http://localhost:5001`.
+
 
 
 
