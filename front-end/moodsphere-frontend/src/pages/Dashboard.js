@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Calendar from '../components/Calendar'
 import './Dashboard.css'
@@ -23,16 +23,25 @@ export default function Dashboard() {
   const [reflectionPrompt] = useState(
     "What is one thing you're grateful for today?"
   )
-  const [journalDates] = useState([
-    '2025-10-01',
-    '2025-10-05',
-    '2025-10-12',
-    '2025-10-15',
-    '2025-10-18',
-    '2025-10-22',
-    '2025-10-25',
-    '2025-10-28',
-  ])
+  const [journalDates, setJournalDates] = useState([])
+
+  // Fetch calendar dates from backend
+  useEffect(() => {
+    const fetchCalendarDates = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/api/calendar')
+        const data = await response.json()
+        if (response.ok) {
+          setJournalDates(data.dates || [])
+        }
+      } catch (error) {
+        console.error('Error fetching calendar dates:', error)
+        // Keep empty array as fallback
+      }
+    }
+
+    fetchCalendarDates()
+  }, [])
 
   const handleLogMood = () => navigate('/log-mood')
   const handleJournalEntry = () => navigate('/journal-editor')
@@ -41,12 +50,53 @@ export default function Dashboard() {
   const handleWriteReflection = () => {
     navigate('/reflections')
   }
+
+  const handleSignOut = async () => {
+    try {
+      // Call backend signout endpoint
+      await fetch('http://localhost:5001/api/auth/signout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      // Clear user data from localStorage
+      localStorage.removeItem('user')
+
+      // Navigate to auth page
+      navigate('/auth')
+    } catch (error) {
+      console.error('Error signing out:', error)
+      // Still clear local data and navigate even if backend call fails
+      localStorage.removeItem('user')
+      navigate('/auth')
+    }
+  }
+
   return (
     <div className='dashboard'>
       <div className='dashboard-container'>
         <header className='dashboard-header'>
-          <h1 className='dashboard-title'>Dashboard</h1>
-          <p className='dashboard-subtitle'>Welcome back!</p>
+          <div>
+            <h1 className='dashboard-title'>Dashboard</h1>
+            <p className='dashboard-subtitle'>Welcome back!</p>
+          </div>
+          <button
+            onClick={handleSignOut}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: '#ff4444',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '500',
+              fontSize: '0.9rem'
+            }}
+          >
+            Sign Out
+          </button>
         </header>
 
         <div className='dashboard-content'>

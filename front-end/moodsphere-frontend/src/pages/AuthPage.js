@@ -4,13 +4,58 @@ import './AuthPage.css';
 
 function AuthPage() {
   const [activeTab, setActiveTab] = useState('signup');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: ''
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+    setError(''); // Clear error when user types
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // For now, just navigate to dashboard
-    // Later, this will handle actual authentication
-    navigate('/dashboard');
+    setError('');
+    setLoading(true);
+
+    const endpoint = activeTab === 'signup' ? '/api/auth/signup' : '/api/auth/login';
+    const payload = activeTab === 'signup'
+      ? { name: formData.name, email: formData.email, password: formData.password }
+      : { email: formData.email, password: formData.password };
+
+    try {
+      const response = await fetch(`http://localhost:5001${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Authentication failed');
+      }
+
+      // Store user data (in real app, would use proper auth tokens)
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      // Navigate to dashboard
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -22,17 +67,31 @@ function AuthPage() {
         <div className="auth-tabs">
           <button
             className={`auth-tab ${activeTab === 'signup' ? 'active' : ''}`}
-            onClick={() => setActiveTab('signup')}
+            onClick={() => {
+              setActiveTab('signup');
+              setError('');
+              setFormData({ name: '', email: '', password: '' });
+            }}
           >
             Sign Up
           </button>
           <button
             className={`auth-tab ${activeTab === 'login' ? 'active' : ''}`}
-            onClick={() => setActiveTab('login')}
+            onClick={() => {
+              setActiveTab('login');
+              setError('');
+              setFormData({ name: '', email: '', password: '' });
+            }}
           >
             Log In
           </button>
         </div>
+
+        {error && (
+          <div style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>
+            {error}
+          </div>
+        )}
 
         {activeTab === 'signup' ? (
           <form className="auth-form" onSubmit={handleSubmit}>
@@ -41,6 +100,9 @@ function AuthPage() {
               <input
                 type="text"
                 id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
                 placeholder="Enter your name"
                 className="form-input"
               />
@@ -51,8 +113,12 @@ function AuthPage() {
               <input
                 type="email"
                 id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
                 placeholder="your@email.com"
                 className="form-input"
+                required
               />
             </div>
 
@@ -61,13 +127,17 @@ function AuthPage() {
               <input
                 type="password"
                 id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
                 placeholder="Create a password"
                 className="form-input"
+                required
               />
             </div>
 
-            <button type="submit" className="auth-submit-button">
-              Create Account
+            <button type="submit" className="auth-submit-button" disabled={loading}>
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
         ) : (
@@ -77,8 +147,12 @@ function AuthPage() {
               <input
                 type="email"
                 id="login-email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
                 placeholder="your@email.com"
                 className="form-input"
+                required
               />
             </div>
 
@@ -87,13 +161,17 @@ function AuthPage() {
               <input
                 type="password"
                 id="login-password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
                 placeholder="Enter your password"
                 className="form-input"
+                required
               />
             </div>
 
-            <button type="submit" className="auth-submit-button">
-              Log In
+            <button type="submit" className="auth-submit-button" disabled={loading}>
+              {loading ? 'Logging In...' : 'Log In'}
             </button>
           </form>
         )}
