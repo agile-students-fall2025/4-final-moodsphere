@@ -6,9 +6,20 @@ export default function Reflections() {
   const [value, setValue] = useState('')
   const navigate = useNavigate()
 
-  function handleSave() {
-    //Currently just navigates back to dashboard. to be implemented
-    navigate('/dashboard')
+  async function handleSave() {
+    const res = await fetch('/api/reflections', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt,
+        text: value,
+      }),
+    })
+    if (res.ok) {
+      navigate('/dashboard')
+    } else {
+      console.error('Failed to save reflection')
+    }
   }
 
   return (
