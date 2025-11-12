@@ -66,25 +66,6 @@ app.post('/api/entries', (req, res) => {
   res.status(201).json(newEntry)
 })
 
-app.get('/api/reflections', (req, res) => {
-  res.json({ reflections })
-})
-
-app.post('/api/reflections', (req, res) => {
-  const { prompt, text } = req.body
-  if (!text || !text.trim()) {
-    return res.status(400).json({ error: 'Reflection text is required' })
-  }
-  const item = {
-    id: String(reflections.length + 1),
-    prompt: prompt || 'Default prompt',
-    text: text.trim(),
-    createdAt: new Date().toISOString(),
-  }
-  reflections.push(item)
-  res.status(201).json(item)
-})
-
 // Auth routes
 app.post('/api/auth/signup', (req, res) => {
   const { name, email, password } = req.body
@@ -176,5 +157,25 @@ if (require.main === module) {
     console.log(`Moodsphere backend listening on http://localhost:${PORT}`)
   })
 }
+
+// Reflections
+app.get('/api/reflections', (req, res) => {
+  res.json({ reflections })
+})
+
+app.post('/api/reflections', (req, res) => {
+  const { prompt, text } = req.body
+  if (!text || !text.trim()) {
+    return res.status(400).json({ error: 'Reflection text is required' })
+  }
+  const item = {
+    id: String(reflections.length + 1),
+    prompt: prompt || 'Default prompt',
+    text: text.trim(),
+    createdAt: new Date().toISOString(),
+  }
+  reflections.push(item)
+  res.status(201).json(item)
+})
 
 module.exports = app
