@@ -152,6 +152,35 @@ app.get('/api/calendar', (req, res) => {
   })
 })
 
+// In-memory chat messages
+let messages = [
+  { id: '1', sender: 'Sarah Chen', text: 'Hey there!', time: '10:00 AM' },
+  { id: '2', sender: 'You', text: "Hey Sarah! How's your day going?", time: '10:02 AM' }
+];
+
+// Chat routes
+app.get('/api/chat', (req, res) => {
+  res.status(200).json({ messages });
+});
+
+app.post('/api/chat', (req, res) => {
+  const { sender, text } = req.body;
+
+  if (!sender || !text) {
+    return res.status(400).json({ error: 'Sender and text are required.' });
+  }
+
+  const newMessage = {
+    id: String(messages.length + 1),
+    sender,
+    text,
+    time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  };
+
+  messages.push(newMessage);
+  res.status(201).json(newMessage);
+});
+
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Moodsphere backend listening on http://localhost:${PORT}`)

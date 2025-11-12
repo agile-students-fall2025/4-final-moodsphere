@@ -1,31 +1,31 @@
-// __tests__/journal.test.js
 const request = require('supertest');
-const app = require('../src/app');
+const chai = require('chai');
+const expect = chai.expect;
+const app = require('../server');
 
 describe('Journal API', () => {
-  test('GET /api/journal returns entries', async () => {
-    const res = await request(app).get('/api/journal');
-    expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body.entries)).toBe(true);
+  it('GET /api/entries should return entries array', async () => {
+    const res = await request(app).get('/api/entries');
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('entries');
+    expect(res.body.entries).to.be.an('array');
   });
 
-  test('POST /api/journal creates an entry and GET with mood filters', async () => {
+  it('POST /api/entries should create a new entry', async () => {
     const payload = {
-      mood: 'TestMood',
-      date: '2025-11-10',
-      time: '12:00',
-      note: 'This is a test'
+      title: 'Test Entry',
+      content: 'This is a test entry',
+      createdAt: '2025-11-10T12:00:00.000Z'
     };
-    const createRes = await request(app).post('/api/journal').send(payload);
-    expect(createRes.statusCode).toBe(201);
-    expect(createRes.body.entry.mood).toBe('TestMood');
 
-    const filterRes = await request(app).get('/api/journal').query({ mood: 'TestMood' });
-    expect(filterRes.statusCode).toBe(200);
-    expect(filterRes.body.entries.some(e => e.mood === 'TestMood')).toBe(true);
+    const createRes = await request(app).post('/api/entries').send(payload);
+    expect(createRes.status).to.equal(201);
+    expect(createRes.body).to.have.property('id');
+    expect(createRes.body.content).to.equal('This is a test entry');
 
-    // cleanup: delete entry
-    const createdId = createRes.body.entry.id;
-    await request(app).delete(`/api/journal/${createdId}`);
+    // Confirm entry exists via GET
+    const getRes = await request(app).get('/api/entries');
+    expect(getRes.status).to.equal(200);
+    expect(getRes.body.entries.some(e => e.content === 'This is a test entry')).to.be.true;
   });
 });
