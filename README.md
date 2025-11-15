@@ -36,7 +36,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
 ## Build and Test Instructions 
 
-### Front-End SetUp and Run Instructions
+### Front-End Set Up and Run Instructions
 The front-end of Moodsphere is built with **React.js** using functional components and JSX syntax. To run the app locally, follow the steps below. 
 
 #### 1. Clone the repository 
