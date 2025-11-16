@@ -31,6 +31,21 @@ Front-end UI is implemented in **React (function components + JSX)** and runs lo
 - **Social:** **Chat with Friends** screen UI scaffolded.
 - **Journal Calendar:** Calendar UI that highlights dates with journal entries (session-level/in-memory).
 
+## Current State of Project – Sprint 2
+
+Sprint 2 focused on building and integrating the Express.js back-end with the existing React front-end.
+
+**Back-end:**
+- Built with Express.js and organized into separate route handlers.
+- Provides RESTful endpoints for authentication, moods, journal entries, and calendar data (see API Endpoints below).
+- Uses in-memory mock data for now (no database yet).
+- Includes Mocha/Chai unit tests and c8 coverage (≥ 10% coverage, meeting the sprint requirement).
+
+**Front-end integration:**
+- Front-end now fetches data from the Express API instead of using purely in-memory state.
+- Mood logging, journal entry creation, and calendar views are wired to the corresponding back-end routes.
+- The app can be run with both servers (front-end and back-end) running locally.
+
 ## How to Contribute 
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
@@ -74,7 +89,7 @@ The back-end of Moodsphere is built with **Express.js** and provides RESTful API
 
 #### 1. Navigate to the back-end directory
 ```bash
-cd /Users/prestonlee/Desktop/Agile/4-final-moodsphere/back-end
+cd back-end
 ```
 
 #### 2. Install dependencies
@@ -103,24 +118,33 @@ You should see: `Moodsphere backend listening on http://localhost:5001`
 
 #### 4. Available API Endpoints
 
-**Authentication:**
-- `POST /api/auth/signup` - Create new user account
-- `POST /api/auth/login` - Login existing user
-- `POST /api/auth/signout` - Sign out user
+**Health Check**
+- `GET /api/health` – Check server status (used to verify the backend is running)
 
-**Moods:**
-- `POST /api/moods` - Log a new mood
-- `GET /api/moods` - Get all moods
+**Authentication**
+- `POST /api/auth/signup` – Create a new user account (stored in in-memory array)
+- `POST /api/auth/login` – Log in an existing user (validates against in-memory users)
+- `POST /api/auth/signout` – Sign out user (mock route; would invalidate session/token in a real app)
 
-**Journal Entries:**
-- `POST /api/entries` - Create a journal entry
-- `GET /api/entries` - Get all journal entries
+**Moods**
+- `POST /api/moods` – Log a new mood (mood + timestamp)
+- `GET /api/moods` – Get all logged moods
 
-**Calendar:**
-- `GET /api/calendar` - Get dates with mood/journal entries
+**Journal Entries**
+- `POST /api/entries` – Create a new journal entry (title, content, createdAt)
+- `GET /api/entries` – Get all journal entries
 
-**Health Check:**
-- `GET /api/health` - Check server status
+**Calendar**
+- `GET /api/calendar` – Get all dates that have either a mood or journal entry recorded
+
+**Chat**
+- `GET /api/chat` – Get all chat messages (mock in-memory conversation)
+- `POST /api/chat` – Post a new chat message
+
+**Reflections**
+- `GET /api/reflections` – Get all reflection entries (prompt + text)
+- `POST /api/reflections` – Create a new reflection entry
+
 
 #### 5. Running Tests
 Run all unit tests with mocha:
