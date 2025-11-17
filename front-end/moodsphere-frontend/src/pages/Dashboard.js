@@ -3,29 +3,45 @@ import { useNavigate } from 'react-router-dom'
 import Calendar from '../components/Calendar'
 import './Dashboard.css'
 
+// Mood to emoji mapping
+const MOOD_EMOJIS = {
+  happy: '😊',
+  excited: '🤩',
+  calm: '😌',
+  grateful: '🙏',
+  sad: '😢',
+  anxious: '😰',
+  angry: '😠',
+  tired: '😴',
+}
+
+// Mood to background color mapping
+const MOOD_COLORS = {
+  happy: '#FFD93D',      // Yellow
+  excited: '#FF6B9D',    // Pink
+  calm: '#A7C7E7',       // Light blue
+  grateful: '#C9A0DC',   // Purple
+  sad: '#6CB4EE',        // Blue
+  anxious: '#FFA07A',    // Light orange
+  angry: '#FF6B6B',      // Red
+  tired: '#B0C4DE',      // Light steel blue
+}
+
+// Capitalize first letter
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
+
 export default function Dashboard() {
   const navigate = useNavigate()
 
-  const [currentMood] = useState({
-    emoji: '😊',
-    label: 'Calm',
-    note: 'Morning meditation session was peaceful.',
-    date: new Date().toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }),
-  })
+  const [currentMood, setCurrentMood] = useState(null)
 
   const [reflectionPrompt] = useState(
     "What is one thing you're grateful for today?"
   )
   const [journalDates, setJournalDates] = useState([])
+  const [latestReflection, setLatestReflection] = useState(null)
 
-  // Fetch calendar dates from backend
+  // Fetch calendar dates and latest reflection from backend
   useEffect(() => {
     const fetchCalendarDates = async () => {
       try {
@@ -40,7 +56,51 @@ export default function Dashboard() {
       }
     }
 
+    const fetchLatestReflection = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/api/reflections')
+        const data = await response.json()
+        if (response.ok && data.reflections && data.reflections.length > 0) {
+          // Get the most recent reflection
+          const latest = data.reflections[data.reflections.length - 1]
+          setLatestReflection(latest)
+        }
+      } catch (error) {
+        console.error('Error fetching reflections:', error)
+      }
+    }
+
+    const fetchLatestMood = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/api/moods')
+        const data = await response.json()
+        if (response.ok && data.moods && data.moods.length > 0) {
+          // Get the most recent mood
+          const latest = data.moods[data.moods.length - 1]
+          const moodKey = latest.mood.toLowerCase()
+          const moodData = {
+            emoji: MOOD_EMOJIS[moodKey] || '😊',
+            label: capitalize(latest.mood),
+            color: MOOD_COLORS[moodKey] || '#A7C7E7',
+            timestamp: new Date(latest.loggedAt).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true,
+            }),
+          }
+          setCurrentMood(moodData)
+        }
+      } catch (error) {
+        console.error('Error fetching moods:', error)
+      }
+    }
+
     fetchCalendarDates()
+    fetchLatestReflection()
+    fetchLatestMood()
   }, [])
 
   const handleLogMood = () => navigate('/log-mood')
@@ -105,28 +165,52 @@ export default function Dashboard() {
             <h2 className='card-title'>Daily Reflection</h2>
             <p className='card-subtitle'>Take a moment to reflect</p>
             <div className='reflection-prompt'>"{reflectionPrompt}"</div>
-            <button
-              className='reflection-button'
-              onClick={handleWriteReflection}
-            >
-              Write Reflection
-            </button>
+
+            {latestReflection ? (
+              <>
+                <div className='reflection-answer'>
+                  {latestReflection.text}
+                </div>
+                <button
+                  className='reflection-button'
+                  onClick={handleWriteReflection}
+                >
+                  Edit Reflection
+                </button>
+              </>
+            ) : (
+              <button
+                className='reflection-button'
+                onClick={handleWriteReflection}
+              >
+                Write Reflection
+              </button>
+            )}
           </div>
 
           {/* Current Mood Card */}
           <div className='mood-card'>
             <div className='mood-header'>
               <h2 className='card-title'>Current Mood</h2>
-              <p className='mood-timestamp'>Last updated {currentMood.date}</p>
+              {currentMood && (
+                <p className='mood-timestamp'>Last updated {currentMood.timestamp}</p>
+              )}
             </div>
 
-            <div className='mood-display'>
-              <div className='mood-emoji-container'>
-                <div className='mood-emoji'>{currentMood.emoji}</div>
+            {currentMood ? (
+              <div className='mood-display'>
+                <div className='mood-emoji-container' style={{ backgroundColor: currentMood.color }}>
+                  <div className='mood-emoji'>{currentMood.emoji}</div>
+                </div>
+                <div className='mood-label'>{currentMood.label}</div>
               </div>
-              <div className='mood-label'>{currentMood.label}</div>
-              <p className='mood-note'>{currentMood.note}</p>
-            </div>
+            ) : (
+              <div className='mood-display'>
+                <p style={{ textAlign: 'center', color: '#7a8899', fontStyle: 'italic' }}>
+                  No mood logged yet. Click "Log Mood" to track how you're feeling!
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Quick Actions */}

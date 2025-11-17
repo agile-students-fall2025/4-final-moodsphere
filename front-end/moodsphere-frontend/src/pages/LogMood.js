@@ -43,9 +43,9 @@ export default function LogMood() {
       }
 
       const data = await response.json();
-      console.log("Saved mood:", data);
+      console.log("✅ MOOD SAVED TO BACKEND:", data);
 
-      alert("Mood saved!");
+      alert("Mood saved! Check your dashboard");
       navigate("/dashboard");
     } catch (err) {
       console.error(err);

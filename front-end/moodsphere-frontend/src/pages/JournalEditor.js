@@ -8,20 +8,37 @@ export default function JournalEditor() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const journalData = {
-      date,
-      title,
-      body,
-      createdAt: new Date().toISOString()
+      title: title || 'Untitled',
+      content: body,
+      createdAt: date + 'T12:00:00.000Z' // Convert YYYY-MM-DD to ISO format
     };
 
-    // TODO: replace with your real API call
-    console.log("SAVE JOURNAL", journalData);
-    alert("Journal entry saved!");
-    navigate("/dashboard");
+    try {
+      const response = await fetch('http://localhost:5001/api/entries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(journalData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to save journal entry');
+      }
+
+      console.log("✅ JOURNAL SAVED TO BACKEND:", data);
+      alert("Journal entry saved! Check your calendar 📅");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error('❌ Error saving journal:', error);
+      alert(`Error: ${error.message}`);
+    }
   };
 
   const handleBack = () => {

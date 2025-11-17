@@ -182,6 +182,32 @@ curl -X POST http://localhost:5001/api/auth/login \
 curl http://localhost:5001/api/calendar
 ```
 
+**Test Create Reflection:**
+```bash
+curl -X POST http://localhost:5001/api/reflections \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"What is one thing you'\''re grateful for today?","text":"I am grateful for my health and family"}'
+```
+
+**Test Get Reflections:**
+```bash
+curl http://localhost:5001/api/reflections
+```
+
+**Test Create Journal Entry:**
+```bash
+curl -X POST http://localhost:5001/api/entries \
+  -H "Content-Type: application/json" \
+  -d '{"title":"My Day","content":"Had a great day today!","createdAt":"2025-11-17T12:00:00.000Z"}'
+```
+
+**Test Log Mood:**
+```bash
+curl -X POST http://localhost:5001/api/moods \
+  -H "Content-Type: application/json" \
+  -d '{"mood":"happy","loggedAt":"2025-11-17T14:30:00.000Z"}'
+```
+
 #### 7. Environment Variables
 None required for **Sprint 2**. Mock data is stored in-memory and will be replaced with a database in Sprint 3.
 
@@ -190,7 +216,7 @@ None required for **Sprint 2**. Mock data is stored in-memory and will be replac
 **Terminal 1 - Backend:**
 ```bash
 cd back-end
-npm start
+npm run dev  # For auto-reload during development
 ```
 
 **Terminal 2 - Frontend:**
@@ -200,17 +226,3 @@ npm start
 ```
 
 The frontend will automatically connect to the backend at `http://localhost:5001`.
-
-
-
-
-
-
-
-
-
-
-
-
-
-

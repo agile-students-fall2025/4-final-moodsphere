@@ -66,6 +66,29 @@ app.post('/api/entries', (req, res) => {
   res.status(201).json(newEntry)
 })
 
+// Reflections routes
+app.get('/api/reflections', (req, res) => {
+  res.json({ reflections });
+});
+
+app.post('/api/reflections', (req, res) => {
+  const { prompt, text } = req.body;
+
+  if (!text) {
+    return res.status(400).json({ error: 'Reflection text is required' });
+  }
+
+  const newReflection = {
+    id: String(reflections.length + 1),
+    prompt: prompt || 'Daily Reflection',
+    text,
+    createdAt: new Date().toISOString(),
+  };
+
+  reflections.push(newReflection);
+  res.status(201).json(newReflection);
+});
+
 // Auth routes
 app.post('/api/auth/signup', (req, res) => {
   const { name, email, password } = req.body
