@@ -1,24 +1,59 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Reflections.css'
 
 export default function Reflections() {
   const [value, setValue] = useState('')
+  const [savedReflections, setSavedReflections] = useState([])
   const navigate = useNavigate()
 
+  const prompt = "What is one thing you're grateful for today?"
+
+  // Fetch saved reflections on component mount
+  useEffect(() => {
+    const fetchReflections = async () => {
+      try {
+        const res = await fetch('http://localhost:5001/api/reflections')
+        const data = await res.json()
+        if (res.ok) {
+          setSavedReflections(data.reflections || [])
+
+          // Load the latest reflection into the text area for editing
+          if (data.reflections && data.reflections.length > 0) {
+            const latest = data.reflections[data.reflections.length - 1]
+            setValue(latest.text)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching reflections:', error)
+      }
+    }
+    fetchReflections()
+  }, [])
+
   async function handleSave() {
-    const res = await fetch('/api/reflections', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        prompt,
-        text: value,
-      }),
-    })
-    if (res.ok) {
-      navigate('/dashboard')
-    } else {
-      console.error('Failed to save reflection')
+    try {
+      const res = await fetch('http://localhost:5001/api/reflections', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt,
+          text: value,
+        }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        console.log('✅ REFLECTION SAVED:', data)
+        alert('Reflection saved!')
+        navigate('/dashboard')
+      } else {
+        console.error('Failed to save reflection')
+        alert('Failed to save reflection')
+      }
+    } catch (error) {
+      console.error('Error saving reflection:', error)
+      alert('Error saving reflection')
     }
   }
 
@@ -42,12 +77,33 @@ export default function Reflections() {
           aria-labelledby='prompt-h'
         >
           <h2 id='prompt-h' className='ref-card-title'>
-            Today’s Prompt
+            Today's Prompt
           </h2>
           <p className='ref-card-body'>
-            What challenged you today and what did you learn from it?
+            {prompt}
           </p>
         </section>
+
+        {/* Display saved reflections */}
+        {savedReflections.length > 0 && (
+          <section className='ref-saved-section'>
+            <h3 className='ref-section-title'>Previous Reflections</h3>
+            {savedReflections.map((reflection) => (
+              <div key={reflection.id} className='ref-saved-card'>
+                <p className='ref-saved-date'>
+                  {new Date(reflection.createdAt).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+                <p className='ref-saved-prompt'><strong>"{reflection.prompt}"</strong></p>
+                <p className='ref-saved-text'>{reflection.text}</p>
+              </div>
+            ))}
+          </section>
+        )}
 
         <h3 className='ref-section-title'>Your Reflection</h3>
         <label htmlFor='reflection' className='sr-only'>

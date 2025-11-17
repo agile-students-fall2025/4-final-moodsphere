@@ -69,6 +69,18 @@
   border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
+.reflection-answer {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  font-size: 1.05rem;
+  color: #2c3e50;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
 .reflection-button {
   background: white;
   color: #2c3e50;
@@ -120,7 +132,7 @@
 .mood-emoji-container {
   width: 160px;
   height: 160px;
-  background: linear-gradient(135deg, #A7C7E7, #c4e0f0);
+  /* background removed - now set dynamically via inline style */
   border-radius: 50%;
   display: flex;
   align-items: center;
