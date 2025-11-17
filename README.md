@@ -10,9 +10,9 @@ Our vision is to create a digital space that empowers users to understand their 
 - [Sarah Randhawa](https://github.com/sarahrandhawa)
 
 ## Project History 
-MoodSphere was conceived as part of an academic project by a team of students who share a deep interest in mental health awareness and digital innovation. The idea emerged from recognizing how many people—especially students—struggle to process emotions in fast-paced, online environments that often lack genuine support.
-Our team wanted to build something more personal than a standard journaling app. We envisioned a digital space where users could not only log their moods and reflections but also see meaningful insights into their emotional patterns and, if they choose, share those experiences with trusted peers.
-The project combines the principles of psychology, user-centered design, and data visualization to promote mindfulness and emotional intelligence. From its initial brainstorming phase, MoodSphere has evolved through iterative sprints focused on research, wireframing, and prototype testing—all aimed at ensuring that the platform feels intuitive, safe, and empowering. Ultimately, MoodSphere represents our collective goal: to make mental-health tracking approachable, social, and supportive, while encouraging people to understand themselves and connect through shared experiences.
+MoodSphere was conceived as part of an academic project by a team of students who share a deep interest in mental health awareness and digital innovation. The idea emerged from recognizing how many people, especially students, struggle to process emotions in fast-paced, online environments that often lack genuine support.
+Our team wanted to build something more personal than a standard journaling app. We envisioned a digital space where users could not only log their moods and reflections but also see meaningful insights into their emotional patterns and, if they choose, share those experiences with trusted peers in a unique manner.
+The project combines the principles of psychology, user-centered design, and data visualization to promote mindfulness and emotional intelligence. From its initial brainstorming phase, MoodSphere has evolved through iterative sprints focused on research, wireframing, and prototype testing—all aimed at ensuring that the platform feels intuitive, safe, and empowering. Ultimately, MoodSphere represents our collective goal: to make mental-health tracking approachable, social, and supportive, while encouraging people to understand themselves and connect through shared experiences. 
 
 ## Prototype
 [Figma Clickable Prototype](https://www.figma.com/proto/3CaJtOCcUR7DTozlQJKRfE/Moodsphere?node-id=10-4&starting-point-node-id=10%3A4&t=SmiLEDxiCU7oBWvi-1)
@@ -35,7 +35,7 @@ Front-end UI is implemented in **React (function components + JSX)** and runs lo
 
 Sprint 2 focused on building and integrating the Express.js back-end with the existing React front-end.
 
-**Back-end:**
+**Back-end integration:**
 - Built with Express.js and organized into separate route handlers.
 - Provides RESTful endpoints for authentication, moods, journal entries, and calendar data (see API Endpoints below).
 - Uses in-memory mock data for now (no database yet).
@@ -182,32 +182,6 @@ curl -X POST http://localhost:5001/api/auth/login \
 curl http://localhost:5001/api/calendar
 ```
 
-**Test Create Reflection:**
-```bash
-curl -X POST http://localhost:5001/api/reflections \
-  -H "Content-Type: application/json" \
-  -d '{"prompt":"What is one thing you'\''re grateful for today?","text":"I am grateful for my health and family"}'
-```
-
-**Test Get Reflections:**
-```bash
-curl http://localhost:5001/api/reflections
-```
-
-**Test Create Journal Entry:**
-```bash
-curl -X POST http://localhost:5001/api/entries \
-  -H "Content-Type: application/json" \
-  -d '{"title":"My Day","content":"Had a great day today!","createdAt":"2025-11-17T12:00:00.000Z"}'
-```
-
-**Test Log Mood:**
-```bash
-curl -X POST http://localhost:5001/api/moods \
-  -H "Content-Type: application/json" \
-  -d '{"mood":"happy","loggedAt":"2025-11-17T14:30:00.000Z"}'
-```
-
 #### 7. Environment Variables
 None required for **Sprint 2**. Mock data is stored in-memory and will be replaced with a database in Sprint 3.
 
@@ -216,7 +190,7 @@ None required for **Sprint 2**. Mock data is stored in-memory and will be replac
 **Terminal 1 - Backend:**
 ```bash
 cd back-end
-npm run dev  # For auto-reload during development
+npm start
 ```
 
 **Terminal 2 - Frontend:**
@@ -226,3 +200,17 @@ npm start
 ```
 
 The frontend will automatically connect to the backend at `http://localhost:5001`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
