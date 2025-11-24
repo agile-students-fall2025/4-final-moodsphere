@@ -114,7 +114,7 @@ export default function Dashboard() {
   const handleSignOut = async () => {
     try {
       // Call backend signout endpoint
-      await fetch('http://localhost:5001/api/auth/signout', {
+      await fetch('http://localhost:5001/auth/signout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
