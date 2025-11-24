@@ -26,7 +26,7 @@ function AuthPage() {
     setError('');
     setLoading(true);
 
-    const endpoint = activeTab === 'signup' ? '/api/auth/signup' : '/api/auth/login';
+    const endpoint = activeTab === 'signup' ? '/auth/register' : '/auth/login';
     const payload = activeTab === 'signup'
       ? { name: formData.name, email: formData.email, password: formData.password }
       : { email: formData.email, password: formData.password };
