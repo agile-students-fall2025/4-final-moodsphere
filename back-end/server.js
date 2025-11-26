@@ -1,15 +1,16 @@
 const express = require('express');
 const cors = require('cors');
+const requireAuth = require('./middleware/requireAuth');  
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = 5001;
+
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-
-const authRoutes = require('./routes/auth');
 
 app.use("/auth", authRoutes);
 app.use("/api/auth", authRoutes);
@@ -28,7 +29,7 @@ app.get('/api/health', (req, res) => {
 });
 
 
-app.post('/api/moods', (req, res) => {
+app.post('/api/moods', requireAuth, (req, res) => {
   const { mood, loggedAt } = req.body;
 
   if (!mood) {
@@ -45,16 +46,16 @@ app.post('/api/moods', (req, res) => {
   res.status(201).json(newMood);
 });
 
-app.get('/api/moods', (req, res) => {
+app.get('/api/moods', requireAuth, (req, res) => {
   res.json({ moods });
 });
 
 
-app.get('/api/entries', (req, res) => {
+app.get('/api/entries', requireAuth, (req, res) => {
   res.json({ entries });
 });
 
-app.post('/api/entries', (req, res) => {
+app.post('/api/entries', requireAuth, (req, res) => {
   const { title, content, createdAt } = req.body;
 
   if (!content) {
@@ -73,11 +74,11 @@ app.post('/api/entries', (req, res) => {
 });
 
 
-app.get('/api/reflections', (req, res) => {
+app.get('/api/reflections', requireAuth, (req, res) => {
   res.json({ reflections });
 });
 
-app.post('/api/reflections', (req, res) => {
+app.post('/api/reflections', requireAuth, (req, res) => {
   const { prompt, text } = req.body;
 
   if (!text || !text.trim()) {
@@ -122,7 +123,7 @@ app.post('/api/chat', (req, res) => {
 });
 
 
-app.get('/api/calendar', (req, res) => {
+app.get('/api/calendar', requireAuth, (req, res) => {
   const moodDates = moods.map((m) =>
     new Date(m.loggedAt).toISOString().split('T')[0]
   );

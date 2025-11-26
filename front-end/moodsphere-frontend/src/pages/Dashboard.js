@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Calendar from '../components/Calendar'
 import './Dashboard.css'
 
-// Mood to emoji mapping
+
 const MOOD_EMOJIS = {
   happy: '😊',
   excited: '🤩',
@@ -15,26 +15,24 @@ const MOOD_EMOJIS = {
   tired: '😴',
 }
 
-// Mood to background color mapping
+
 const MOOD_COLORS = {
-  happy: '#FFD93D',      // Yellow
-  excited: '#FF6B9D',    // Pink
-  calm: '#A7C7E7',       // Light blue
-  grateful: '#C9A0DC',   // Purple
-  sad: '#6CB4EE',        // Blue
-  anxious: '#FFA07A',    // Light orange
-  angry: '#FF6B6B',      // Red
-  tired: '#B0C4DE',      // Light steel blue
+  happy: '#FFD93D',
+  excited: '#FF6B9D',
+  calm: '#A7C7E7',
+  grateful: '#C9A0DC',
+  sad: '#6CB4EE',
+  anxious: '#FFA07A',
+  angry: '#FF6B6B',
+  tired: '#B0C4DE',
 }
 
-// Capitalize first letter
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
 
 export default function Dashboard() {
   const navigate = useNavigate()
 
   const [currentMood, setCurrentMood] = useState(null)
-
   const [reflectionPrompt] = useState(
     "What is one thing you're grateful for today?"
   )
@@ -43,25 +41,33 @@ export default function Dashboard() {
 
   // Fetch calendar dates and latest reflection from backend
   useEffect(() => {
+    const token = localStorage.getItem('token')
+
     const fetchCalendarDates = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/calendar')
+        const response = await fetch('http://localhost:5001/api/calendar', {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : '',
+          },
+        })
         const data = await response.json()
         if (response.ok) {
           setJournalDates(data.dates || [])
         }
       } catch (error) {
         console.error('Error fetching calendar dates:', error)
-        // Keep empty array as fallback
       }
     }
 
     const fetchLatestReflection = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/reflections')
+        const response = await fetch('http://localhost:5001/api/reflections', {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : '',
+          },
+        })
         const data = await response.json()
         if (response.ok && data.reflections && data.reflections.length > 0) {
-          // Get the most recent reflection
           const latest = data.reflections[data.reflections.length - 1]
           setLatestReflection(latest)
         }
@@ -72,10 +78,13 @@ export default function Dashboard() {
 
     const fetchLatestMood = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/moods')
+        const response = await fetch('http://localhost:5001/api/moods', {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : '',
+          },
+        })
         const data = await response.json()
         if (response.ok && data.moods && data.moods.length > 0) {
-          // Get the most recent mood
           const latest = data.moods[data.moods.length - 1]
           const moodKey = latest.mood.toLowerCase()
           const moodData = {
@@ -107,29 +116,25 @@ export default function Dashboard() {
   const handleJournalEntry = () => navigate('/journal-editor')
   const handleViewJournal = () => navigate('/view-entry')
   const handleChat = () => navigate('/contacts')
-  const handleWriteReflection = () => {
-    navigate('/reflections')
-  }
+  const handleWriteReflection = () => navigate('/reflections')
 
   const handleSignOut = async () => {
     try {
-      // Call backend signout endpoint
-      await fetch('http://localhost:5001/auth/signout', {
+      await fetch('http://localhost:5001/api/auth/signout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
       })
 
-      // Clear user data from localStorage
       localStorage.removeItem('user')
+      localStorage.removeItem('token')
 
-      // Navigate to auth page
       navigate('/auth')
     } catch (error) {
       console.error('Error signing out:', error)
-      // Still clear local data and navigate even if backend call fails
       localStorage.removeItem('user')
+      localStorage.removeItem('token')
       navigate('/auth')
     }
   }
@@ -152,7 +157,7 @@ export default function Dashboard() {
               borderRadius: '8px',
               cursor: 'pointer',
               fontWeight: '500',
-              fontSize: '0.9rem'
+              fontSize: '0.9rem',
             }}
           >
             Sign Out
@@ -168,9 +173,7 @@ export default function Dashboard() {
 
             {latestReflection ? (
               <>
-                <div className='reflection-answer'>
-                  {latestReflection.text}
-                </div>
+                <div className='reflection-answer'>{latestReflection.text}</div>
                 <button
                   className='reflection-button'
                   onClick={handleWriteReflection}
@@ -193,21 +196,33 @@ export default function Dashboard() {
             <div className='mood-header'>
               <h2 className='card-title'>Current Mood</h2>
               {currentMood && (
-                <p className='mood-timestamp'>Last updated {currentMood.timestamp}</p>
+                <p className='mood-timestamp'>
+                  Last updated {currentMood.timestamp}
+                </p>
               )}
             </div>
 
             {currentMood ? (
               <div className='mood-display'>
-                <div className='mood-emoji-container' style={{ backgroundColor: currentMood.color }}>
+                <div
+                  className='mood-emoji-container'
+                  style={{ backgroundColor: currentMood.color }}
+                >
                   <div className='mood-emoji'>{currentMood.emoji}</div>
                 </div>
                 <div className='mood-label'>{currentMood.label}</div>
               </div>
             ) : (
               <div className='mood-display'>
-                <p style={{ textAlign: 'center', color: '#7a8899', fontStyle: 'italic' }}>
-                  No mood logged yet. Click "Log Mood" to track how you're feeling!
+                <p
+                  style={{
+                    textAlign: 'center',
+                    color: '#7a8899',
+                    fontStyle: 'italic',
+                  }}
+                >
+                  No mood logged yet. Click "Log Mood" to track how you're
+                  feeling!
                 </p>
               </div>
             )}
