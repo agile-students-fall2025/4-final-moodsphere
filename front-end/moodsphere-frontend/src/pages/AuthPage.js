@@ -18,7 +18,7 @@ function AuthPage() {
       ...formData,
       [e.target.name]: e.target.value
     });
-    setError(''); // Clear error when user types
+    setError('');
   };
 
   const handleSubmit = async (e) => {
@@ -26,7 +26,10 @@ function AuthPage() {
     setError('');
     setLoading(true);
 
-    const endpoint = activeTab === 'signup' ? '/auth/register' : '/auth/login';
+    const endpoint = activeTab === 'signup'
+      ? '/auth/register'
+      : '/auth/login';
+
     const payload = activeTab === 'signup'
       ? { name: formData.name, email: formData.email, password: formData.password }
       : { email: formData.email, password: formData.password };
@@ -46,11 +49,19 @@ function AuthPage() {
         throw new Error(data.error || 'Authentication failed');
       }
 
-      // Store user data (in real app, would use proper auth tokens)
-      localStorage.setItem('user', JSON.stringify(data.user));
+     
+      if (data.user) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
 
-      // Navigate to dashboard
+      // Save JWT token
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
+
+
       navigate('/dashboard');
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -75,6 +86,7 @@ function AuthPage() {
           >
             Sign Up
           </button>
+
           <button
             className={`auth-tab ${activeTab === 'login' ? 'active' : ''}`}
             onClick={() => {
@@ -93,6 +105,7 @@ function AuthPage() {
           </div>
         )}
 
+        {/* SIGN UP FORM */}
         {activeTab === 'signup' ? (
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
@@ -141,6 +154,7 @@ function AuthPage() {
             </button>
           </form>
         ) : (
+
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="login-email">Email</label>
