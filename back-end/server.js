@@ -1,20 +1,30 @@
 const express = require('express');
 const cors = require('cors');
-const requireAuth = require('./middleware/requireAuth');  
+const requireAuth = require('./middleware/requireAuth');
 const authRoutes = require('./routes/auth');
+const { body, validationResult } = require('express-validator');
 
 const app = express();
 const PORT = 5001;
 
-
-// Middleware
+// -------------------- Middleware --------------------
 app.use(cors());
 app.use(express.json());
 
+// Centralized validation error handler
+const handleValidation = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ error: errors.array()[0].msg });
+  }
+  next();
+};
 
-app.use("/auth", authRoutes);
-app.use("/api/auth", authRoutes);
+// -------------------- Auth Routes --------------------
+app.use('/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 
+// -------------------- Temporary In-Memory Data --------------------
 let moods = [];
 let entries = [];
 let reflections = [];
@@ -23,128 +33,121 @@ let messages = [
   { id: '2', sender: 'You', text: "Hey Sarah! How's your day going?", time: '10:02 AM' }
 ];
 
-
+// -------------------- Health --------------------
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-
-app.post('/api/moods', requireAuth, (req, res) => {
-  const { mood, loggedAt } = req.body;
-
-  if (!mood) {
-    return res.status(400).json({ error: 'Mood is required' });
-  }
-
-  const newMood = {
-    id: String(moods.length + 1),
-    mood,
-    loggedAt: loggedAt || new Date().toISOString(),
-  };
-
-  moods.push(newMood);
-  res.status(201).json(newMood);
-});
-
+// -------------------- Moods --------------------
 app.get('/api/moods', requireAuth, (req, res) => {
   res.json({ moods });
 });
 
+app.post(
+  '/api/moods',
+  requireAuth,
+  [body('mood').notEmpty().withMessage('Mood is required')],
+  handleValidation,
+  (req, res) => {
+    const { mood, loggedAt } = req.body;
+    const newMood = {
+      id: String(moods.length + 1),
+      mood,
+      loggedAt: loggedAt || new Date().toISOString(),
+    };
+    moods.push(newMood);
+    res.status(201).json(newMood);
+  }
+);
 
+// -------------------- Journal Entries --------------------
 app.get('/api/entries', requireAuth, (req, res) => {
   res.json({ entries });
 });
 
-app.post('/api/entries', requireAuth, (req, res) => {
-  const { title, content, createdAt } = req.body;
-
-  if (!content) {
-    return res.status(400).json({ error: 'Content is required' });
+app.post(
+  '/api/entries',
+  requireAuth,
+  [body('content').notEmpty().withMessage('Content is required')],
+  handleValidation,
+  (req, res) => {
+    const { title, content, createdAt } = req.body;
+    const newEntry = {
+      id: String(entries.length + 1),
+      title: title || 'Untitled',
+      content,
+      createdAt: createdAt || new Date().toISOString(),
+    };
+    entries.push(newEntry);
+    res.status(201).json(newEntry);
   }
+);
 
-  const newEntry = {
-    id: String(entries.length + 1),
-    title: title || 'Untitled',
-    content,
-    createdAt: createdAt || new Date().toISOString(),
-  };
-
-  entries.push(newEntry);
-  res.status(201).json(newEntry);
-});
-
-
+// -------------------- Reflections --------------------
 app.get('/api/reflections', requireAuth, (req, res) => {
   res.json({ reflections });
 });
 
-app.post('/api/reflections', requireAuth, (req, res) => {
-  const { prompt, text } = req.body;
-
-  if (!text || !text.trim()) {
-    return res.status(400).json({ error: 'Reflection text is required' });
+app.post(
+  '/api/reflections',
+  requireAuth,
+  [body('text').notEmpty().withMessage('Reflection text is required')],
+  handleValidation,
+  (req, res) => {
+    const { prompt, text } = req.body;
+    const newReflection = {
+      id: String(reflections.length + 1),
+      prompt: prompt || 'Daily Reflection',
+      text: text.trim(),
+      createdAt: new Date().toISOString(),
+    };
+    reflections.push(newReflection);
+    res.status(201).json(newReflection);
   }
+);
 
-  const newReflection = {
-    id: String(reflections.length + 1),
-    prompt: prompt || 'Daily Reflection',
-    text: text.trim(),
-    createdAt: new Date().toISOString(),
-  };
-
-  reflections.push(newReflection);
-  res.status(201).json(newReflection);
-});
-
-
+// -------------------- Chat --------------------
 app.get('/api/chat', (req, res) => {
-  res.status(200).json({ messages });
+  res.json({ messages });
 });
 
-app.post('/api/chat', (req, res) => {
-  const { sender, text } = req.body;
-
-  if (!sender || !text) {
-    return res.status(400).json({ error: 'Sender and text are required.' });
+app.post(
+  '/api/chat',
+  [body('sender').notEmpty().withMessage('Sender is required'), body('text').notEmpty().withMessage('Text is required')],
+  handleValidation,
+  (req, res) => {
+    const { sender, text } = req.body;
+    const newMessage = {
+      id: String(messages.length + 1),
+      sender,
+      text,
+      time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+    };
+    messages.push(newMessage);
+    res.status(201).json(newMessage);
   }
+);
 
-  const newMessage = {
-    id: String(messages.length + 1),
-    sender,
-    text,
-    time: new Date().toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-    }),
-  };
-
-  messages.push(newMessage);
-  res.status(201).json(newMessage);
-});
-
-
+// -------------------- Calendar --------------------
 app.get('/api/calendar', requireAuth, (req, res) => {
-  const moodDates = moods.map((m) =>
-    new Date(m.loggedAt).toISOString().split('T')[0]
-  );
-
-  const entryDates = entries.map((e) =>
-    new Date(e.createdAt).toISOString().split('T')[0]
-  );
-
-  const allDates = [...new Set([...moodDates, ...entryDates])];
-
-  res.json({
-    dates: allDates.sort(),
-    count: allDates.length,
-  });
+  const moodDates = moods.map((m) => new Date(m.loggedAt).toISOString().split('T')[0]);
+  const entryDates = entries.map((e) => new Date(e.createdAt).toISOString().split('T')[0]);
+  const allDates = [...new Set([...moodDates, ...entryDates])].sort();
+  res.json({ dates: allDates, count: allDates.length });
 });
 
+// -------------------- Root --------------------
 app.get('/', (req, res) => {
   res.send('Moodsphere backend is running');
 });
 
+// -------------------- Global Error Handler --------------------
+app.use((err, req, res, next) => {
+  console.error(err.stack || err);
+  res.status(err.status || 500).json({ success: false, error: err.message || 'Internal Server Error' });
+});
 
+// -------------------- Server --------------------
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Moodsphere backend listening on http://localhost:${PORT}`);
