@@ -1,11 +1,15 @@
+// Load environment variables
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const requireAuth = require('./middleware/requireAuth');
 const authRoutes = require('./routes/auth');
 const { body, validationResult } = require('express-validator');
+const connectDB = require('./config/database');
 
 const app = express();
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 
 // -------------------- Middleware --------------------
 app.use(cors());
@@ -149,8 +153,11 @@ app.use((err, req, res, next) => {
 
 // -------------------- Server --------------------
 if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`Moodsphere backend listening on http://localhost:${PORT}`);
+  // Connect to MongoDB, then start the server
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`Moodsphere backend listening on http://localhost:${PORT}`);
+    });
   });
 }
 
