@@ -8,6 +8,9 @@ const authRoutes = require('./routes/auth');
 const { body, validationResult } = require('express-validator');
 const connectDB = require('./config/database');
 const Mood = require('./models/Mood');
+const Entry = require('./models/Entry');
+const Reflection = require("./models/Reflection");
+const Message = require('./models/Message');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -75,9 +78,15 @@ app.post(
   }
 );
 
-// -------------------- Journal Entries --------------------
-app.get('/api/entries', requireAuth, (req, res) => {
-  res.json({ entries });
+// -------------------- Journal Entries (MongoDB) --------------------
+app.get('/api/entries', requireAuth, async (req, res) => {
+  try {
+    const userEntries = await Entry.find({ userId: req.userId }).sort({ createdAt: -1 });
+    res.json({ entries: userEntries });
+  } catch (err) {
+    console.error("Error fetching entries:", err);
+    res.status(500).json({ error: "Failed to fetch entries" });
+  }
 });
 
 app.post(
@@ -85,22 +94,32 @@ app.post(
   requireAuth,
   [body('content').notEmpty().withMessage('Content is required')],
   handleValidation,
-  (req, res) => {
-    const { title, content, createdAt } = req.body;
-    const newEntry = {
-      id: String(entries.length + 1),
-      title: title || 'Untitled',
-      content,
-      createdAt: createdAt || new Date().toISOString(),
-    };
-    entries.push(newEntry);
-    res.status(201).json(newEntry);
+  async (req, res) => {
+    try {
+      const { title, content, createdAt } = req.body;
+      const newEntry = await Entry.create({
+        userId: req.userId,
+        title: title || "Untitled",
+        content,
+        createdAt: createdAt || new Date()
+      });
+      res.status(201).json(newEntry);
+    } catch (err) {
+      console.error("Error creating entry:", err);
+      res.status(500).json({ error: "Failed to create entry" });
+    }
   }
 );
 
-// -------------------- Reflections --------------------
-app.get('/api/reflections', requireAuth, (req, res) => {
-  res.json({ reflections });
+// -------------------- Reflections (MongoDB) --------------------
+app.get('/api/reflections', requireAuth, async (req, res) => {
+  try {
+    const userReflections = await Reflection.find({ userId: req.userId }).sort({ createdAt: -1 });
+    res.json({ reflections: userReflections });
+  } catch (err) {
+    console.error("Error fetching reflections:", err);
+    res.status(500).json({ error: "Failed to fetch reflections" });
+  }
 });
 
 app.post(
@@ -108,48 +127,85 @@ app.post(
   requireAuth,
   [body('text').notEmpty().withMessage('Reflection text is required')],
   handleValidation,
-  (req, res) => {
-    const { prompt, text } = req.body;
-    const newReflection = {
-      id: String(reflections.length + 1),
-      prompt: prompt || 'Daily Reflection',
-      text: text.trim(),
-      createdAt: new Date().toISOString(),
-    };
-    reflections.push(newReflection);
-    res.status(201).json(newReflection);
+  async (req, res) => {
+    try {
+      const { prompt, text } = req.body;
+
+      const newReflection = await Reflection.create({
+        userId: req.userId,
+        prompt: prompt || "Daily Reflection",
+        text: text.trim()
+      });
+
+      res.status(201).json(newReflection);
+    } catch (err) {
+      console.error("Error creating reflection:", err);
+      res.status(500).json({ error: "Failed to create reflection" });
+    }
   }
 );
 
-// -------------------- Chat --------------------
-app.get('/api/chat', (req, res) => {
-  res.json({ messages });
+// -------------------- Chat (MongoDB) --------------------
+app.get('/api/chat', async (req, res) => {
+  try {
+    const messages = await Message.find().sort({ createdAt: 1 });
+    res.json({ messages });
+  } catch (err) {
+    console.error("Error fetching messages:", err);
+    res.status(500).json({ error: "Failed to fetch messages" });
+  }
 });
 
 app.post(
   '/api/chat',
-  [body('sender').notEmpty().withMessage('Sender is required'), body('text').notEmpty().withMessage('Text is required')],
+  [
+    body('sender').notEmpty().withMessage('Sender is required'),
+    body('text').notEmpty().withMessage('Text is required')
+  ],
   handleValidation,
-  (req, res) => {
-    const { sender, text } = req.body;
-    const newMessage = {
-      id: String(messages.length + 1),
-      sender,
-      text,
-      time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-    };
-    messages.push(newMessage);
-    res.status(201).json(newMessage);
+  async (req, res) => {
+    try {
+      const { sender, text } = req.body;
+
+      const newMessage = await Message.create({
+        sender,
+        text,
+        time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+      });
+
+      res.status(201).json(newMessage);
+    } catch (err) {
+      console.error("Error creating message:", err);
+      res.status(500).json({ error: "Failed to create message" });
+    }
   }
 );
 
 // -------------------- Calendar --------------------
-app.get('/api/calendar', requireAuth, (req, res) => {
-  const moodDates = moods.map((m) => new Date(m.loggedAt).toISOString().split('T')[0]);
-  const entryDates = entries.map((e) => new Date(e.createdAt).toISOString().split('T')[0]);
-  const allDates = [...new Set([...moodDates, ...entryDates])].sort();
-  res.json({ dates: allDates, count: allDates.length });
+app.get('/api/calendar', requireAuth, async (req, res) => {
+  try {
+    // Fetch moods for this user
+    const userMoods = await Mood.find({ userId: req.userId });
+
+    // Extract YYYY-MM-DD dates
+    const moodDates = userMoods.map(m =>
+      new Date(m.loggedAt).toISOString().split("T")[0]
+    );
+
+    const entryDates = entries.map(e =>
+      new Date(e.createdAt).toISOString().split("T")[0]
+    );
+
+    // Combine + dedupe
+    const allDates = [...new Set([...moodDates, ...entryDates])].sort();
+
+    res.json({ dates: allDates, count: allDates.length });
+  } catch (err) {
+    console.error("Calendar route error:", err);
+    res.status(500).json({ error: "Failed to load calendar data" });
+  }
 });
+
 
 // -------------------- Root --------------------
 app.get('/', (req, res) => {
