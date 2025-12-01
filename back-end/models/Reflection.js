@@ -1,10 +1,41 @@
-const mongoose = require("mongoose");
+// models/Reflection.js
+// Mongoose Reflection model for MongoDB
 
-const ReflectionSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
-  prompt: { type: String, default: "Daily Reflection" },
-  text: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
+const mongoose = require('mongoose');
 
-module.exports = mongoose.model("Reflection", ReflectionSchema);
+const reflectionSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
+    prompt: {
+      type: String,
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+    },
+    date: {
+      type: String, // Store as YYYY-MM-DD for easy comparison
+      required: true,
+      index: true,
+    },
+  },
+  {
+    timestamps: true, // Adds createdAt and updatedAt
+  }
+);
+
+// Compound index to ensure one reflection per user per day
+reflectionSchema.index({ userId: 1, date: 1 }, { unique: true });
+
+// Index for efficient queries by user and date
+reflectionSchema.index({ userId: 1, createdAt: -1 });
+
+const Reflection = mongoose.model('Reflection', reflectionSchema);
+
+module.exports = Reflection;

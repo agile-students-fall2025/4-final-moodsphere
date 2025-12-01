@@ -8,9 +8,9 @@ const authRoutes = require('./routes/auth');
 const { body, validationResult } = require('express-validator');
 const connectDB = require('./config/database');
 const Mood = require('./models/Mood');
-const Entry = require('./models/Entry');
-const Reflection = require("./models/Reflection");
-const Message = require('./models/Message');
+const JournalEntry = require('./models/JournalEntry');
+const Reflection = require('./models/Reflection');
+const { getDailyPrompt } = require('./utils/reflectionPrompts');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -34,8 +34,8 @@ app.use('/api/auth', authRoutes);
 
 // -------------------- Temporary In-Memory Data --------------------
 // Moods now stored in MongoDB (see models/Mood.js)
-let entries = [];
-let reflections = [];
+// Journal Entries now stored in MongoDB (see models/JournalEntry.js)
+// Reflections now stored in MongoDB (see models/Reflection.js)
 let messages = [
   { id: '1', sender: 'Sarah Chen', text: 'Hey there!', time: '10:00 AM' },
   { id: '2', sender: 'You', text: "Hey Sarah! How's your day going?", time: '10:02 AM' }
@@ -78,14 +78,14 @@ app.post(
   }
 );
 
-// -------------------- Journal Entries (MongoDB) --------------------
+// -------------------- Journal Entries --------------------
 app.get('/api/entries', requireAuth, async (req, res) => {
   try {
-    const userEntries = await Entry.find({ userId: req.userId }).sort({ createdAt: -1 });
+    const userEntries = await JournalEntry.find({ userId: req.userId }).sort({ createdAt: -1 });
     res.json({ entries: userEntries });
-  } catch (err) {
-    console.error("Error fetching entries:", err);
-    res.status(500).json({ error: "Failed to fetch entries" });
+  } catch (error) {
+    console.error('Error fetching journal entries:', error);
+    res.status(500).json({ error: 'Failed to fetch journal entries' });
   }
 });
 
@@ -97,31 +97,96 @@ app.post(
   async (req, res) => {
     try {
       const { title, content, createdAt } = req.body;
-      const newEntry = await Entry.create({
+      const newEntry = await JournalEntry.create({
         userId: req.userId,
-        title: title || "Untitled",
+        title: title || 'Untitled',
         content,
-        createdAt: createdAt || new Date()
+        createdAt: createdAt || new Date(),
       });
       res.status(201).json(newEntry);
-    } catch (err) {
-      console.error("Error creating entry:", err);
-      res.status(500).json({ error: "Failed to create entry" });
+    } catch (error) {
+      console.error('Error creating journal entry:', error);
+      res.status(500).json({ error: 'Failed to create journal entry' });
     }
   }
 );
 
-// -------------------- Reflections (MongoDB) --------------------
-app.get('/api/reflections', requireAuth, async (req, res) => {
+app.put(
+  '/api/entries/:id',
+  requireAuth,
+  [body('content').notEmpty().withMessage('Content is required')],
+  handleValidation,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { title, content } = req.body;
+
+      const entry = await JournalEntry.findOne({ _id: id, userId: req.userId });
+
+      if (!entry) {
+        return res.status(404).json({ error: 'Entry not found or unauthorized' });
+      }
+
+      entry.title = title || 'Untitled';
+      entry.content = content;
+      await entry.save();
+
+      res.json(entry);
+    } catch (error) {
+      console.error('Error updating journal entry:', error);
+      res.status(500).json({ error: 'Failed to update journal entry' });
+    }
+  }
+);
+
+app.delete('/api/entries/:id', requireAuth, async (req, res) => {
   try {
-    const userReflections = await Reflection.find({ userId: req.userId }).sort({ createdAt: -1 });
-    res.json({ reflections: userReflections });
-  } catch (err) {
-    console.error("Error fetching reflections:", err);
-    res.status(500).json({ error: "Failed to fetch reflections" });
+    const { id } = req.params;
+
+    const entry = await JournalEntry.findOneAndDelete({ _id: id, userId: req.userId });
+
+    if (!entry) {
+      return res.status(404).json({ error: 'Entry not found or unauthorized' });
+    }
+
+    res.json({ message: 'Entry deleted successfully', entry });
+  } catch (error) {
+    console.error('Error deleting journal entry:', error);
+    res.status(500).json({ error: 'Failed to delete journal entry' });
   }
 });
 
+// -------------------- Reflections --------------------
+// Get daily prompt
+app.get('/api/reflections/prompt', (req, res) => {
+  const prompt = getDailyPrompt();
+  res.json({ prompt });
+});
+
+// Get all reflections for the authenticated user
+app.get('/api/reflections', requireAuth, async (req, res) => {
+  try {
+    const userReflections = await Reflection.find({ userId: req.userId }).sort({ date: -1 });
+    res.json({ reflections: userReflections });
+  } catch (error) {
+    console.error('Error fetching reflections:', error);
+    res.status(500).json({ error: 'Failed to fetch reflections' });
+  }
+});
+
+// Get today's reflection for the authenticated user
+app.get('/api/reflections/today', requireAuth, async (req, res) => {
+  try {
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const todayReflection = await Reflection.findOne({ userId: req.userId, date: today });
+    res.json({ reflection: todayReflection });
+  } catch (error) {
+    console.error('Error fetching today reflection:', error);
+    res.status(500).json({ error: 'Failed to fetch today reflection' });
+  }
+});
+
+// Create or update today's reflection
 app.post(
   '/api/reflections',
   requireAuth,
@@ -129,31 +194,57 @@ app.post(
   handleValidation,
   async (req, res) => {
     try {
-      const { prompt, text } = req.body;
+      const { text } = req.body;
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      const prompt = getDailyPrompt();
 
-      const newReflection = await Reflection.create({
-        userId: req.userId,
-        prompt: prompt || "Daily Reflection",
-        text: text.trim()
-      });
+      // Check if reflection already exists for today
+      let reflection = await Reflection.findOne({ userId: req.userId, date: today });
 
-      res.status(201).json(newReflection);
-    } catch (err) {
-      console.error("Error creating reflection:", err);
-      res.status(500).json({ error: "Failed to create reflection" });
+      if (reflection) {
+        // Update existing reflection
+        reflection.text = text.trim();
+        reflection.prompt = prompt;
+        await reflection.save();
+        res.json(reflection);
+      } else {
+        // Create new reflection
+        reflection = await Reflection.create({
+          userId: req.userId,
+          prompt,
+          text: text.trim(),
+          date: today,
+        });
+        res.status(201).json(reflection);
+      }
+    } catch (error) {
+      console.error('Error saving reflection:', error);
+      res.status(500).json({ error: 'Failed to save reflection' });
     }
   }
 );
 
-// -------------------- Chat (MongoDB) --------------------
-app.get('/api/chat', async (req, res) => {
+// Delete a reflection by ID
+app.delete('/api/reflections/:id', requireAuth, async (req, res) => {
   try {
-    const messages = await Message.find().sort({ createdAt: 1 });
-    res.json({ messages });
-  } catch (err) {
-    console.error("Error fetching messages:", err);
-    res.status(500).json({ error: "Failed to fetch messages" });
+    const { id } = req.params;
+
+    const reflection = await Reflection.findOneAndDelete({ _id: id, userId: req.userId });
+
+    if (!reflection) {
+      return res.status(404).json({ error: 'Reflection not found or unauthorized' });
+    }
+
+    res.json({ message: 'Reflection deleted successfully', reflection });
+  } catch (error) {
+    console.error('Error deleting reflection:', error);
+    res.status(500).json({ error: 'Failed to delete reflection' });
   }
+});
+
+// -------------------- Chat --------------------
+app.get('/api/chat', (req, res) => {
+  res.json({ messages });
 });
 
 app.post(
