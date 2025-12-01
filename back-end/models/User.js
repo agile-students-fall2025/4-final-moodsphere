@@ -1,15 +1,35 @@
 // models/User.js
-// In-memory mock User model for testing login and register
+// Mongoose User model for MongoDB
 
-const users = []; // store users here temporarily
+const mongoose = require('mongoose');
 
-module.exports = {
-  create: async (data) => {
-    const newUser = { _id: Date.now().toString(), ...data };
-    users.push(newUser);
-    return newUser;
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      index: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
   },
-  findOne: async (query) => {
-    return users.find(user => user.email === query.email) || null;
-  },
-};
+  {
+    timestamps: true, // Adds createdAt and updatedAt automatically
+  }
+);
+
+// Create and export the User model
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;
