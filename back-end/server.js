@@ -249,28 +249,54 @@ app.get('/api/chat', (req, res) => {
 
 app.post(
   '/api/chat',
-  [body('sender').notEmpty().withMessage('Sender is required'), body('text').notEmpty().withMessage('Text is required')],
+  [
+    body('sender').notEmpty().withMessage('Sender is required'),
+    body('text').notEmpty().withMessage('Text is required')
+  ],
   handleValidation,
-  (req, res) => {
-    const { sender, text } = req.body;
-    const newMessage = {
-      id: String(messages.length + 1),
-      sender,
-      text,
-      time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-    };
-    messages.push(newMessage);
-    res.status(201).json(newMessage);
+  async (req, res) => {
+    try {
+      const { sender, text } = req.body;
+
+      const newMessage = await Message.create({
+        sender,
+        text,
+        time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+      });
+
+      res.status(201).json(newMessage);
+    } catch (err) {
+      console.error("Error creating message:", err);
+      res.status(500).json({ error: "Failed to create message" });
+    }
   }
 );
 
 // -------------------- Calendar --------------------
-app.get('/api/calendar', requireAuth, (req, res) => {
-  const moodDates = moods.map((m) => new Date(m.loggedAt).toISOString().split('T')[0]);
-  const entryDates = entries.map((e) => new Date(e.createdAt).toISOString().split('T')[0]);
-  const allDates = [...new Set([...moodDates, ...entryDates])].sort();
-  res.json({ dates: allDates, count: allDates.length });
+app.get('/api/calendar', requireAuth, async (req, res) => {
+  try {
+    // Fetch moods for this user
+    const userMoods = await Mood.find({ userId: req.userId });
+
+    // Extract YYYY-MM-DD dates
+    const moodDates = userMoods.map(m =>
+      new Date(m.loggedAt).toISOString().split("T")[0]
+    );
+
+    const entryDates = entries.map(e =>
+      new Date(e.createdAt).toISOString().split("T")[0]
+    );
+
+    // Combine + dedupe
+    const allDates = [...new Set([...moodDates, ...entryDates])].sort();
+
+    res.json({ dates: allDates, count: allDates.length });
+  } catch (err) {
+    console.error("Calendar route error:", err);
+    res.status(500).json({ error: "Failed to load calendar data" });
+  }
 });
+
 
 // -------------------- Root --------------------
 app.get('/', (req, res) => {
