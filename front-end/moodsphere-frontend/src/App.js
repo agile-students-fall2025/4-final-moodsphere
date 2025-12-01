@@ -28,6 +28,7 @@ export default function App() {
         {/* new pages */}
         <Route path='/log-mood' element={<LogMood />} />
         <Route path='/journal-editor' element={<JournalEditor />} />
+        <Route path='/journal-editor/:id' element={<JournalEditor />} />
         <Route path='/reflections' element={<Reflections />} />
       </Routes>
     </div>

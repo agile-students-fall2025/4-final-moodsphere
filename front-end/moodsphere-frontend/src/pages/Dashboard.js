@@ -59,20 +59,15 @@ export default function Dashboard() {
       }
     }
 
-    const fetchLatestReflection = async () => {
+    const fetchLatestReflection = () => {
       try {
-        const response = await fetch('http://localhost:5001/api/reflections', {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-          },
-        })
-        const data = await response.json()
-        if (response.ok && data.reflections && data.reflections.length > 0) {
-          const latest = data.reflections[data.reflections.length - 1]
-          setLatestReflection(latest)
+        const savedReflection = localStorage.getItem('dailyReflection')
+        if (savedReflection) {
+          const parsed = JSON.parse(savedReflection)
+          setLatestReflection(parsed)
         }
       } catch (error) {
-        console.error('Error fetching reflections:', error)
+        console.error('Error loading reflection:', error)
       }
     }
 
@@ -85,7 +80,8 @@ export default function Dashboard() {
         })
         const data = await response.json()
         if (response.ok && data.moods && data.moods.length > 0) {
-          const latest = data.moods[data.moods.length - 1]
+          // Backend returns moods sorted by loggedAt DESC, so first item is most recent
+          const latest = data.moods[0]
           const moodKey = latest.mood.toLowerCase()
           const moodData = {
             emoji: MOOD_EMOJIS[moodKey] || '😊',

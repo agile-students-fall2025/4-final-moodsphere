@@ -9,52 +9,39 @@ export default function Reflections() {
 
   const prompt = "What is one thing you're grateful for today?"
 
-  // Fetch saved reflections on component mount
+  // Load saved reflection from localStorage on component mount
   useEffect(() => {
-    const fetchReflections = async () => {
+    const savedReflection = localStorage.getItem('dailyReflection')
+    if (savedReflection) {
       try {
-        const res = await fetch('http://localhost:5001/api/reflections')
-        const data = await res.json()
-        if (res.ok) {
-          setSavedReflections(data.reflections || [])
-
-          // Load the latest reflection into the text area for editing
-          if (data.reflections && data.reflections.length > 0) {
-            const latest = data.reflections[data.reflections.length - 1]
-            setValue(latest.text)
-          }
-        }
+        const parsed = JSON.parse(savedReflection)
+        setValue(parsed.text || '')
+        setSavedReflections([parsed])
       } catch (error) {
-        console.error('Error fetching reflections:', error)
+        console.error('Error loading reflection:', error)
       }
     }
-    fetchReflections()
   }, [])
 
-  async function handleSave() {
-    try {
-      const res = await fetch('http://localhost:5001/api/reflections', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt,
-          text: value,
-        }),
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        console.log('✅ REFLECTION SAVED:', data)
-        alert('Reflection saved!')
-        navigate('/dashboard')
-      } else {
-        console.error('Failed to save reflection')
-        alert('Failed to save reflection')
-      }
-    } catch (error) {
-      console.error('Error saving reflection:', error)
-      alert('Error saving reflection')
+  function handleSave() {
+    if (!value.trim()) {
+      alert('Please write a reflection before saving')
+      return
     }
+
+    const reflection = {
+      id: Date.now().toString(),
+      prompt,
+      text: value.trim(),
+      createdAt: new Date().toISOString(),
+    }
+
+    // Save to localStorage
+    localStorage.setItem('dailyReflection', JSON.stringify(reflection))
+
+    console.log('✅ REFLECTION SAVED TO LOCALSTORAGE:', reflection)
+    alert('Reflection saved!')
+    navigate('/dashboard')
   }
 
   return (
