@@ -59,15 +59,19 @@ export default function Dashboard() {
       }
     }
 
-    const fetchLatestReflection = () => {
+    const fetchLatestReflection = async () => {
       try {
-        const savedReflection = localStorage.getItem('dailyReflection')
-        if (savedReflection) {
-          const parsed = JSON.parse(savedReflection)
-          setLatestReflection(parsed)
+        const response = await fetch('http://localhost:5001/api/reflections/today', {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : '',
+          },
+        })
+        const data = await response.json()
+        if (response.ok && data.reflection) {
+          setLatestReflection(data.reflection)
         }
       } catch (error) {
-        console.error('Error loading reflection:', error)
+        console.error('Error fetching today reflection:', error)
       }
     }
 
