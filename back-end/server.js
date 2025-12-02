@@ -81,7 +81,34 @@ app.post(
 // -------------------- Journal Entries --------------------
 app.get('/api/entries', requireAuth, async (req, res) => {
   try {
-    const userEntries = await JournalEntry.find({ userId: req.userId }).sort({ createdAt: -1 });
+    const { date } = req.query;
+
+    let query = { userId: req.userId };
+
+    // If date parameter provided, filter entries by that date
+    if (date) {
+      // Parse the requested date (YYYY-MM-DD format)
+      const [year, month, day] = date.split('-').map(Number);
+
+      // Get all entries for this user
+      const allEntries = await JournalEntry.find({ userId: req.userId }).sort({ createdAt: -1 });
+
+      // Filter by matching date components (year, month, day) ignoring timezone
+      const filteredEntries = allEntries.filter(entry => {
+        const entryDate = new Date(entry.createdAt);
+
+        // Get date components in UTC
+        const entryYear = entryDate.getUTCFullYear();
+        const entryMonth = entryDate.getUTCMonth() + 1; // getUTCMonth is 0-indexed
+        const entryDay = entryDate.getUTCDate();
+
+        return entryYear === year && entryMonth === month && entryDay === day;
+      });
+
+      return res.json({ entries: filteredEntries });
+    }
+
+    const userEntries = await JournalEntry.find(query).sort({ createdAt: -1 });
     res.json({ entries: userEntries });
   } catch (error) {
     console.error('Error fetching journal entries:', error);
@@ -275,20 +302,17 @@ app.post(
 // -------------------- Calendar --------------------
 app.get('/api/calendar', requireAuth, async (req, res) => {
   try {
-    // Fetch moods for this user
-    const userMoods = await Mood.find({ userId: req.userId });
+    // Fetch journal entries for this user only (not moods)
+    const userEntries = await JournalEntry.find({ userId: req.userId });
 
-    // Extract YYYY-MM-DD dates
-    const moodDates = userMoods.map(m =>
-      new Date(m.loggedAt).toISOString().split("T")[0]
-    );
+    // Extract YYYY-MM-DD dates using UTC to avoid timezone shifts
+    const entryDates = userEntries.map(e => {
+      const d = new Date(e.createdAt);
+      return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+    });
 
-    const entryDates = entries.map(e =>
-      new Date(e.createdAt).toISOString().split("T")[0]
-    );
-
-    // Combine + dedupe
-    const allDates = [...new Set([...moodDates, ...entryDates])].sort();
+    // Remove duplicates and sort
+    const allDates = [...new Set(entryDates)].sort();
 
     res.json({ dates: allDates, count: allDates.length });
   } catch (err) {

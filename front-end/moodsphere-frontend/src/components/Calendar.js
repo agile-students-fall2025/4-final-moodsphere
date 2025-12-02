@@ -36,7 +36,7 @@ function Calendar({ journalDates = [] }) {
     const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
     if (hasJournalEntry(day)) {
-      navigate(`/journal/${dateString}`);
+      navigate(`/view-entry?date=${dateString}`);
     }
   };
 
