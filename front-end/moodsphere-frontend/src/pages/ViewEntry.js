@@ -1,17 +1,26 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import './ViewEntry.css';
 
 export default function ViewEntry() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const dateFilter = searchParams.get('date'); // Get date from URL query param
+  const [selectedDate, setSelectedDate] = useState(dateFilter || '');
 
   const fetchEntries = async () => {
     try {
       const token = localStorage.getItem('token');
 
-      const response = await fetch('http://localhost:5001/api/entries', {
+      // Add date parameter if filtering by date
+      const url = dateFilter
+        ? `http://localhost:5001/api/entries?date=${dateFilter}`
+        : 'http://localhost:5001/api/entries';
+
+      const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -32,8 +41,20 @@ export default function ViewEntry() {
   };
 
   useEffect(() => {
+    setSelectedDate(dateFilter || '');
     fetchEntries();
-  }, []);
+  }, [dateFilter]); // Re-fetch when date filter changes
+
+  const handleDateChange = (e) => {
+    const newDate = e.target.value;
+    setSelectedDate(newDate);
+
+    if (newDate) {
+      setSearchParams({ date: newDate });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   const handleDelete = async (entryId) => {
     if (!window.confirm('Are you sure you want to delete this journal entry?')) {
@@ -77,6 +98,20 @@ export default function ViewEntry() {
     });
   };
 
+  const formatFilterDate = (dateString) => {
+    const date = new Date(dateString + 'T00:00:00');
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  const clearFilter = () => {
+    navigate('/view-entry');
+  };
+
   if (loading) {
     return (
       <div className="journal-page">
@@ -96,6 +131,64 @@ export default function ViewEntry() {
       <div className="journal-header">
         <button className="back-btn" onClick={() => navigate('/dashboard')}>← Back</button>
         <h2 className="journal-title">My Journal</h2>
+      </div>
+
+      {/* Date Filter */}
+      <div style={{
+        backgroundColor: 'white',
+        border: '1px solid #E5E7EB',
+        borderRadius: '12px',
+        padding: '1rem 1.5rem',
+        marginBottom: '1.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '1rem',
+        flexWrap: 'wrap'
+      }}>
+        <label style={{
+          fontSize: '0.95rem',
+          fontWeight: '600',
+          color: '#374151'
+        }}>
+          Filter by date:
+        </label>
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={handleDateChange}
+          style={{
+            padding: '0.5rem 0.75rem',
+            border: '1px solid #D1D5DB',
+            borderRadius: '8px',
+            fontSize: '0.95rem',
+            color: '#374151',
+            cursor: 'pointer'
+          }}
+        />
+        {selectedDate && (
+          <button
+            onClick={clearFilter}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: '#EF4444',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              fontWeight: '500'
+            }}
+          >
+            Clear Filter
+          </button>
+        )}
+        <span style={{
+          fontSize: '0.85rem',
+          color: '#6B7280',
+          marginLeft: 'auto'
+        }}>
+          {entries.length} {entries.length === 1 ? 'entry' : 'entries'} {selectedDate ? `on ${formatFilterDate(selectedDate)}` : 'total'}
+        </span>
       </div>
 
       <div className="journal-list">

@@ -5,15 +5,16 @@ import './JournalEntry.css';
 function JournalEntry() {
   const { date } = useParams();
   const navigate = useNavigate();
-  const [entry, setEntry] = useState(null);
+  const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchEntry = async () => {
+    const fetchEntriesForDate = async () => {
       try {
         const token = localStorage.getItem('token');
 
-        const response = await fetch('http://localhost:5001/api/entries', {
+        // Fetch entries filtered by date from backend
+        const response = await fetch(`http://localhost:5001/api/entries?date=${date}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -21,31 +22,41 @@ function JournalEntry() {
         const data = await response.json();
 
         if (response.ok) {
-          // Find entry that matches the date
-          const foundEntry = data.entries.find(e => {
-            const entryDate = new Date(e.createdAt).toISOString().split('T')[0];
-            return entryDate === date;
-          });
-
-          setEntry(foundEntry || null);
+          setEntries(data.entries || []);
         }
       } catch (error) {
-        console.error('Error fetching entry:', error);
+        console.error('Error fetching entries:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchEntry();
+    fetchEntriesForDate();
   }, [date]);
 
   const handleBack = () => {
     navigate('/dashboard');
   };
 
+  const handleEdit = (entryId) => {
+    navigate(`/journal-editor/${entryId}`);
+  };
+
+  const handleCreateNew = () => {
+    navigate('/journal-editor');
+  };
+
   const formatDate = (dateString) => {
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString + 'T00:00:00').toLocaleDateString('en-US', options);
+  };
+
+  const formatTime = (dateString) => {
+    return new Date(dateString).toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
   };
 
   if (loading) {
@@ -63,7 +74,7 @@ function JournalEntry() {
     );
   }
 
-  if (!entry) {
+  if (!entries || entries.length === 0) {
     return (
       <div className="journal-entry-page">
         <div className="journal-entry-container">
@@ -71,8 +82,11 @@ function JournalEntry() {
             ← Back to Dashboard
           </button>
           <div className="no-entry">
-            <h2>No Entry Found</h2>
-            <p>There is no journal entry for {formatDate(date)}.</p>
+            <h2>No Entries Found</h2>
+            <p>There are no journal entries for {formatDate(date)}.</p>
+            <button className="create-entry-button" onClick={handleCreateNew}>
+              ✏️ Create New Entry
+            </button>
           </div>
         </div>
       </div>
@@ -86,25 +100,39 @@ function JournalEntry() {
           ← Back to Dashboard
         </button>
 
-        <article className="journal-entry-card">
-          <header className="entry-header">
-            <div className="entry-mood-badge">📔</div>
-            <div className="entry-header-text">
-              <h1 className="entry-title">{entry.title}</h1>
-              <p className="entry-date">{formatDate(date)}</p>
-            </div>
-          </header>
+        <div className="entries-header">
+          <h1 className="entries-date-title">{formatDate(date)}</h1>
+          <p className="entries-count">{entries.length} {entries.length === 1 ? 'entry' : 'entries'}</p>
+        </div>
 
-          <div className="entry-content">
-            <p>{entry.content}</p>
-          </div>
+        <div className="entries-list">
+          {entries.map((entry) => (
+            <article key={entry._id} className="journal-entry-card">
+              <header className="entry-header">
+                <div className="entry-mood-badge">📔</div>
+                <div className="entry-header-text">
+                  <h2 className="entry-title">{entry.title}</h2>
+                  <p className="entry-time">{formatTime(entry.createdAt)}</p>
+                </div>
+                <button
+                  className="edit-entry-button"
+                  onClick={() => handleEdit(entry._id)}
+                  title="Edit entry"
+                >
+                  ✏️
+                </button>
+              </header>
 
-          <footer className="entry-footer">
-            <div className="entry-tags">
-              <span className="entry-tag">Entry ID: {entry.id}</span>
-            </div>
-          </footer>
-        </article>
+              <div className="entry-content">
+                <p>{entry.content}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <button className="create-entry-button floating" onClick={handleCreateNew}>
+          ✏️ Create New Entry
+        </button>
       </div>
     </div>
   );
