@@ -27,10 +27,13 @@ export default function LogMood() {
     setError("");
 
     try {
+      const token = localStorage.getItem('token');
+
       const response = await fetch("http://localhost:5001/api/moods", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
           mood,

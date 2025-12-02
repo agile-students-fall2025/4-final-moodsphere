@@ -11,7 +11,13 @@ function JournalEntry() {
   useEffect(() => {
     const fetchEntry = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/entries');
+        const token = localStorage.getItem('token');
+
+        const response = await fetch('http://localhost:5001/api/entries', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
         const data = await response.json();
 
         if (response.ok) {
