@@ -54,7 +54,8 @@ Database Integration (MongoDB & Mongoose):
 * Connected the backend to a cloud-hosted MongoDB Atlas instance.
 * Integrated database access using Mongoose.
 * Implemented the User model for authenticating registered users.
-* In-memory mock data from Sprint 2 is now being migrated into persistent MongoDB collections.
+* In-memory mock data from Sprint 2 is now being migrated into persistent MongoDB collections. All user accounts are now stored persistently in MongoDB, not in memory.
+
 Secure Auth + JWT:
 * JWT is stored by the frontend and automatically attached to protected API requests via:
 
@@ -156,28 +157,31 @@ You should see: `Moodsphere backend listening on http://localhost:5001`
 - `GET /api/health` – Check server status (used to verify the backend is running)
 
 **Authentication**
-- `POST /api/auth/signup` – Create a new user account (stored in in-memory array)
-- `POST /api/auth/login` – Log in an existing user (validates against in-memory users)
-- `POST /api/auth/signout` – Sign out user (mock route; would invalidate session/token in a real app)
+- `POST /api/auth/signup` – Create a new user account (stored in MongoDB)
+- `POST /api/auth/login` – Log in an existing user and return a JWT
+- `POST /api/auth/signout` – Sign out user (mock route; front-end clears token/local state)
+
+> Note: The front-end stores the JWT in `localStorage` and sends it as  
+> `Authorization: Bearer <token>`
 
 **Moods**
-- `POST /api/moods` – Log a new mood (mood + timestamp)
-- `GET /api/moods` – Get all logged moods
+- `POST /api/moods` **(Protected)** – Log a new mood (requires valid JWT)
+- `GET /api/moods` **(Protected)** – Get all logged moods (requires valid JWT)
 
 **Journal Entries**
-- `POST /api/entries` – Create a new journal entry (title, content, createdAt)
-- `GET /api/entries` – Get all journal entries
+- `POST /api/entries` **(Protected)** – Create a new journal entry (title, content, createdAt)
+- `GET /api/entries` **(Protected)** – Get all journal entries (requires valid JWT)
 
 **Calendar**
-- `GET /api/calendar` – Get all dates that have either a mood or journal entry recorded
+- `GET /api/calendar` **(Protected)** – Get all dates that have either a mood or journal entry recorded (requires valid JWT)
 
 **Chat**
 - `GET /api/chat` – Get all chat messages (mock in-memory conversation)
 - `POST /api/chat` – Post a new chat message
 
 **Reflections**
-- `GET /api/reflections` – Get all reflection entries (prompt + text)
-- `POST /api/reflections` – Create a new reflection entry
+- `GET /api/reflections` **(Protected)** – Get all reflection entries (prompt + text; requires valid JWT)
+- `POST /api/reflections` **(Protected)** – Create a new reflection entry (requires valid JWT)
 
 
 #### 5. Running Tests
@@ -244,7 +248,7 @@ npm start
 
 If the .env is set correctly, you should see the following: 
 ```bash
-Mongoose is connected to MongoDB Altas. 
+Mongoose connected to MongoDB Altas. 
 Moodsphere backend listening on http://localhost:5001
 ```
 
