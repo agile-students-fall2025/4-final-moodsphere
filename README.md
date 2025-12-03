@@ -46,6 +46,40 @@ Sprint 2 focused on building and integrating the Express.js back-end with the ex
 - Mood logging, journal entry creation, and calendar views are wired to the corresponding back-end routes.
 - The app can be run with both servers (front-end and back-end) running locally.
 
+## Current State of Project - Sprint 3
+
+Sprint 3 focused on fully integrating a cloud-hosted MongoDB database, securing all authentication with JWT, and safely handling credentials through environmental variables. All Sprint 3 technical requirements were completed.
+
+Database Integration (MongoDB & Mongoose):
+* Connected the backend to a cloud-hosted MongoDB Atlas instance.
+* Integrated database access using Mongoose.
+* Implemented the User model for authenticating registered users.
+* In-memory mock data from Sprint 2 is now being migrated into persistent MongoDB collections.
+Secure Auth + JWT:
+* JWT is stored by the frontend and automatically attached to protected API requests via:
+
+```bash
+Authorization: Bearer <token>
+```
+
+* Backend routes requiring logged-in access are protected with a custom requireAuth middleware, which verifies the JWT before allowing access.
+
+
+Environment Variables:
+* Sensitive credentials (MongoDB URI and JWT secret) are stored in a .env file and loaded with dotenv.
+* .env is excluded from Git via .gitignore.
+* A .env.example file is included to guide setup without exposing real credentials.
+
+Data Validation:
+* All /auth/register and /auth/login requests use express-validator to validate user input before interacting with the database.
+* Prevents malformed data and enforces password/email rules.
+
+Protected Backend Routes:
+* Routes for moods, reflections, journal entries, and calendar access now require authentication.
+* Any request missing or carrying an invalid token returns an HTTP 401 Unauthorized response.
+
+Overall, the application now uses secure credential management, persistent cloud data, and token-based authentication for all protected functionality.
+
 ## How to Contribute 
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
@@ -183,7 +217,47 @@ curl http://localhost:5001/api/calendar
 ```
 
 #### 7. Environment Variables
-None required for **Sprint 2**. Mock data is stored in-memory and will be replaced with a database in Sprint 3.
+To run the backend with database and authentication enabled, a .env file must be created inside the /back-end directory.
+This file contains private credentials and must not be committed.
+
+##### 1. Copy the example file 
+Inside the back-end directory follow the instructions from the example .env file. In other words, run: 
+```bash
+cp .env.example .env
+```
+
+##### 2. Insert the credentials 
+Open .env and provide the values for the following fields. 
+```bash
+
+MONGODB_URI=<your MongoDB Atlas connection URI>
+JWT_SECRET=<your JWT signing key>
+PORT=5001
+```
+
+##### 3. Start the backend normally 
+```bash
+cd back-end
+npm install 
+npm start
+```
+
+If the .env is set correctly, you should see the following: 
+```bash
+Mongoose is connected to MongoDB Altas. 
+Moodsphere backend listening on http://localhost:5001
+```
+
+#### Security Notes 
+* .env must never be committed to Github
+* .env is already listed in .gitignore 
+* MongoDB Atlas is cloud-hosted (no local installations)
+* All stored data is now persistent in the database 
+* All protected routes check for a valid JWT in: 
+```bash
+Authorization: Bearer <token>
+```
+
 
 #### 8. Running Front-End and Back-End Together
 
