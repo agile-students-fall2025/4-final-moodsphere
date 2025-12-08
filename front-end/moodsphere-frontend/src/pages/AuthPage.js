@@ -35,7 +35,7 @@ function AuthPage() {
       : { email: formData.email, password: formData.password };
 
     try {
-      const response = await fetch(`http://localhost:5001${endpoint}`, {
+      const response = await fetch(`/api${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -196,4 +196,3 @@ function AuthPage() {
 
 export default AuthPage;
 
-//

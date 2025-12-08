@@ -17,8 +17,8 @@ export default function ViewEntry() {
 
       // Add date parameter if filtering by date
       const url = dateFilter
-        ? `http://localhost:5001/api/entries?date=${dateFilter}`
-        : 'http://localhost:5001/api/entries';
+        ? `/api/entries?date=${dateFilter}`
+        : '/api/entries';
 
       const response = await fetch(url, {
         headers: {
@@ -64,7 +64,7 @@ export default function ViewEntry() {
     try {
       const token = localStorage.getItem('token');
 
-      const response = await fetch(`http://localhost:5001/api/entries/${entryId}`, {
+      const response = await fetch(`/api/entries/${entryId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
