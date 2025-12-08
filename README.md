@@ -81,6 +81,68 @@ Protected Backend Routes:
 
 Overall, the application now uses secure credential management, persistent cloud data, and token-based authentication for all protected functionality.
 
+
+## Current State of Project - Sprint 4
+Sprint 4 focused on deploying the full Moodsphere application (front end + back-end) to a live cloud server using a DigitalOcean Droplet. This sprint completed the transition from local development to a publicly accessible production environment. 
+
+### Live Deployment 
+This application is now live and publicly accessible at: 
+
+```bash
+http://104.248.12.226
+```
+
+Users can register, log in, log moods, write reflections, and view their dashboard using the deployed system. 
+
+### Cloud Infrastructure (DigitalOcean)
+* The application is hosted on a DigitalOcean Ubuntu Droplet 
+* The back-end is deployed using: 
+    * Node.js 
+    * PM2 for process management and persistence 
+* The front-end deployed using: 
+    * A React production build 
+    * Served as a static site via the server 
+
+
+### Security and Environmental Variables 
+* All sensitive credentials are stored in a private .env file on the server 
+* The .env file is: 
+    * NOT committed to Github 
+    * Shared only with admins/graders via the team messenger (per course policy)
+* A .env.example file remains in the repository for setup reference 
+
+### Front-End and Back-End Communication 
+* All front-end API requests were updated from: 
+```bash
+http://localhost:5001
+```
+
+to 
+```bash
+/api/...
+```
+
+This allows the deployed front-end to correctly communicate with the deployed back-end without relying on localhost. 
+
+### Deployment Status 
+* Front-end successfully deployed 
+* Back-end successfully deployed 
+* MongoDB Atlas connected in production 
+* JWT authentication fully functional in production
+* PM2 process manager running and stable: 
+* Full user flow verified: 
+    * Signup 
+    * Login 
+    * Mood logging 
+    * Reflections 
+    * Dashboard 
+    * Sign out 
+
+### Summary - Sprint 4 successfully transitioned Moodsphere from a fully local development application to a live, production-ready cloud hosted platform. This completed the full stack, deployment lifecycle, including environment security, authentication, database, persistence, and real-world accessibility. 
+
+
+
+
 ## How to Contribute 
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
