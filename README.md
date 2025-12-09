@@ -50,13 +50,13 @@ Sprint 2 focused on building and integrating the Express.js back-end with the ex
 
 Sprint 3 focused on fully integrating a cloud-hosted MongoDB database, securing all authentication with JWT, and safely handling credentials through environmental variables. All Sprint 3 technical requirements were completed.
 
-Database Integration (MongoDB & Mongoose):
+**Database Integration (MongoDB & Mongoose):**
 * Connected the backend to a cloud-hosted MongoDB Atlas instance.
 * Integrated database access using Mongoose.
 * Implemented the User model for authenticating registered users.
 * In-memory mock data from Sprint 2 is now being migrated into persistent MongoDB collections. All user accounts are now stored persistently in MongoDB, not in memory.
 
-Secure Auth + JWT:
+**Secure Auth + JWT:**
 * JWT is stored by the frontend and automatically attached to protected API requests via:
 
 ```bash
@@ -66,16 +66,16 @@ Authorization: Bearer <token>
 * Backend routes requiring logged-in access are protected with a custom requireAuth middleware, which verifies the JWT before allowing access.
 
 
-Environment Variables:
+**Environment Variables:**
 * Sensitive credentials (MongoDB URI and JWT secret) are stored in a .env file and loaded with dotenv.
 * .env is excluded from Git via .gitignore.
 * A .env.example file is included to guide setup without exposing real credentials.
 
-Data Validation:
+**Data Validation:**
 * All /auth/register and /auth/login requests use express-validator to validate user input before interacting with the database.
 * Prevents malformed data and enforces password/email rules.
 
-Protected Backend Routes:
+**Protected Backend Routes:**
 * Routes for moods, reflections, journal entries, and calendar access now require authentication.
 * Any request missing or carrying an invalid token returns an HTTP 401 Unauthorized response.
 
