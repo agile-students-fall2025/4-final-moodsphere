@@ -130,32 +130,30 @@ export default function Reflections() {
 
   const isToday = (dateString) => dateString === today
 
-  if (loading) {
-    return (
-      <div className='reflections'>
-        <div className='ref-container' style={{ paddingTop: '2rem' }}>
-          <p>Loading...</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className='reflections'>
-      <header className='ref-topbar'>
-        <div className='ref-container ref-topbar-row'>
-          <button
-            className='ref-back'
-            onClick={() => navigate('/dashboard')}
-            aria-label='Back'
-          >
-            ←
-          </button>
-          <h1 className='ref-title'>Daily Reflection</h1>
-        </div>
-      </header>
+      <div className='ref-container'>
+        {/* Header Section */}
+        <header className='ref-topbar'>
+          <div className='ref-topbar-row'>
+            <button
+              className='ref-back'
+              onClick={() => navigate('/dashboard')}
+              aria-label='Back'
+            >
+              ←
+            </button>
+            <h1 className='ref-title'>Daily Reflection</h1>
+          </div>
+        </header>
 
-      <main className='ref-container ref-main'>
+        {/* Main Content Area */}
+        {loading ? (
+          <div className='ref-main' style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <p style={{ color: '#5a6c7d', fontSize: '1.1rem' }}>Loading...</p>
+          </div>
+        ) : (
+          <main className='ref-main'>
         <section className='ref-card ref-card-prompt' aria-labelledby='prompt-h'>
           <h2 id='prompt-h' className='ref-card-title'>
             Today's Prompt
@@ -167,7 +165,6 @@ export default function Reflections() {
           {todayReflectionId ? 'Your Reflection (Edit)' : 'Your Reflection'}
         </h3>
         <label htmlFor='reflection' className='sr-only'>
-          Reflection text
         </label>
         <textarea
           id='reflection'
@@ -216,30 +213,31 @@ export default function Reflections() {
           </section>
         )}
 
-        <section className='ref-card ref-card--tips' aria-labelledby='tips-h'>
-          <h2 id='tips-h' className='ref-card-title'>
-            Reflection Tips:
-          </h2>
-          <ul className='ref-tips'>
-            <li>Be honest and authentic</li>
-            <li>There are no wrong answers</li>
-            <li>Take your time to think deeply</li>
-            <li>Focus on growth and learning</li>
-          </ul>
-        </section>
-      </main>
+            <section className='ref-card ref-card--tips' aria-labelledby='tips-h'>
+              <h2 id='tips-h' className='ref-card-title'>
+                Reflection Tips:
+              </h2>
+              <ul className='ref-tips'>
+                <li>Be honest and authentic</li>
+                <li>There are no wrong answers</li>
+                <li>Take your time to think deeply</li>
+                <li>Focus on growth and learning</li>
+              </ul>
+            </section>
+          </main>
+        )}
 
-      <footer className='ref-bottom'>
-        <div className='ref-container'>
+        {/* Bottom Action Bar */}
+        <footer className='ref-bottom'>
           <button
             className='ref-save'
             onClick={handleSave}
-            disabled={!value.trim()}
+            disabled={!value.trim() || loading}
           >
             {todayReflectionId ? 'Update Reflection' : 'Save Reflection'}
           </button>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   )
 }
