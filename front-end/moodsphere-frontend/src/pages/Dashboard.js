@@ -33,6 +33,7 @@ export default function Dashboard() {
   const navigate = useNavigate()
 
   const [currentMood, setCurrentMood] = useState(null)
+  const [mergedColor, setMergedColor] = useState('#A7C7E7')
   const [reflectionPrompt] = useState(
     "What is one thing you're grateful for today?"
   )
@@ -87,10 +88,33 @@ export default function Dashboard() {
           // Backend returns moods sorted by loggedAt DESC, so first item is most recent
           const latest = data.moods[0]
           const moodKey = latest.mood.toLowerCase()
+
+          // Calculate merged color from all moods
+          const colors = data.moods.map((m) => {
+            const key = m.mood.toLowerCase()
+            return MOOD_COLORS[key] || '#A7C7E7'
+          })
+
+          let totalR = 0, totalG = 0, totalB = 0
+          colors.forEach((color) => {
+            const r = parseInt(color.slice(1, 3), 16)
+            const g = parseInt(color.slice(3, 5), 16)
+            const b = parseInt(color.slice(5, 7), 16)
+            totalR += r
+            totalG += g
+            totalB += b
+          })
+
+          const avgR = Math.round(totalR / colors.length)
+          const avgG = Math.round(totalG / colors.length)
+          const avgB = Math.round(totalB / colors.length)
+          const merged = `#${avgR.toString(16).padStart(2, '0')}${avgG.toString(16).padStart(2, '0')}${avgB.toString(16).padStart(2, '0')}`
+          setMergedColor(merged)
+
           const moodData = {
             emoji: MOOD_EMOJIS[moodKey] || '😊',
             label: capitalize(latest.mood),
-            color: MOOD_COLORS[moodKey] || '#A7C7E7',
+            color: merged,
             timestamp: new Date(latest.loggedAt).toLocaleDateString('en-US', {
               month: 'short',
               day: 'numeric',
@@ -115,7 +139,7 @@ export default function Dashboard() {
   const handleLogMood = () => navigate('/log-mood')
   const handleJournalEntry = () => navigate('/journal-editor')
   const handleViewJournal = () => navigate('/view-entry')
-  const handleChat = () => navigate('/contacts')
+  const handleMoodMerge = () => navigate('/mood-merge')
   const handleWriteReflection = () => navigate('/reflections')
 
   const handleSignOut = async () => {
@@ -244,9 +268,9 @@ export default function Dashboard() {
                 <span className='action-icon'>📖</span>
                 <span className='action-text'>View Journal Entries</span>
               </button>
-              <button className='action-button' onClick={handleChat}>
-                <span className='action-icon'>💬</span>
-                <span className='action-text'>Chat with Friends</span>
+              <button className='action-button' onClick={handleMoodMerge}>
+                <span className='action-icon'>🎨</span>
+                <span className='action-text'>Mood Merge</span>
               </button>
             </div>
           </div>

@@ -78,6 +78,23 @@ app.post(
   }
 );
 
+app.delete('/api/moods/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const mood = await Mood.findOneAndDelete({ _id: id, userId: req.userId });
+
+    if (!mood) {
+      return res.status(404).json({ error: 'Mood not found or unauthorized' });
+    }
+
+    res.json({ message: 'Mood deleted successfully', mood });
+  } catch (error) {
+    console.error('Error deleting mood:', error);
+    res.status(500).json({ error: 'Failed to delete mood' });
+  }
+});
+
 // -------------------- Journal Entries --------------------
 app.get('/api/entries', requireAuth, async (req, res) => {
   try {
