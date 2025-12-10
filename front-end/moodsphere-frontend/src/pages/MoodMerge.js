@@ -47,7 +47,7 @@ function MoodMerge() {
   const fetchMoods = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/moods', {
+      const response = await fetch('/api/moods', {
         headers: {
           Authorization: token ? `Bearer ${token}` : '',
         },
@@ -104,7 +104,7 @@ function MoodMerge() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/moods/${moodId}`, {
+      const response = await fetch(`/api/moods/${moodId}`, {
         method: 'DELETE',
         headers: {
           Authorization: token ? `Bearer ${token}` : '',
