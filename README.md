@@ -1,6 +1,6 @@
 # Moodsphere: A Social Mood Journal 
-Moodsphere is a mobile-friendly web application that helps users track their emotions, reflect on their mental well-being, and connect with friends and peers for support. Mental health challenges are incredibly common, yet many people struggle to find safe and accessible ways to express how they feel. Moodsphere provides an easy and supportive space to log moods, visualize emotional patterns, and share experiences within a trusted network. 
-Our vision is to create a digital space that empowers users to understand their emotions and strengthen community support through self-reflection and shared well-being. We aim to make emotional wellness approachable, trackable, and socially connected.
+Moodsphere is a mobile-friendly web application that helps users track their emotions and reflect on their mental well-being through mood logging, journaling, and daily reflections. Mental health challenges are incredibly common, yet many people struggle to find safe and accessible ways to express how they feel. Moodsphere provides an easy and supportive space to log moods, visualize emotional patterns, and reflect consistently.
+Our vision is to create a digital space that empowers users to understand their emotions through self reflection and habit tracking. We aim to make emotional wellness approachable, trackable, and sustainable.
 
 ## Collaborators
 - [Aaqila Patel](https://github.com/aaqilap)
@@ -11,7 +11,7 @@ Our vision is to create a digital space that empowers users to understand their 
 
 ## Project History 
 MoodSphere was conceived as part of an academic project by a team of students who share a deep interest in mental health awareness and digital innovation. The idea emerged from recognizing how many people, especially students, struggle to process emotions in fast-paced, online environments that often lack genuine support.
-Our team wanted to build something more personal than a standard journaling app. We envisioned a digital space where users could not only log their moods and reflections but also see meaningful insights into their emotional patterns and, if they choose, share those experiences with trusted peers in a unique manner.
+Our team wanted to build something more personal than a standard journaling app. We envisioned a digital space where users could not only log their moods and reflections but also see meaningful insights into their emotional patterns and, if they choose, analyze those experiences through meaningful emotional patterns over time.
 The project combines the principles of psychology, user-centered design, and data visualization to promote mindfulness and emotional intelligence. From its initial brainstorming phase, MoodSphere has evolved through iterative sprints focused on research, wireframing, and prototype testing—all aimed at ensuring that the platform feels intuitive, safe, and empowering. Ultimately, MoodSphere represents our collective goal: to make mental-health tracking approachable, social, and supportive, while encouraging people to understand themselves and connect through shared experiences. 
 
 ## Prototype
@@ -28,7 +28,6 @@ Front-end UI is implemented in **React (function components + JSX)** and runs lo
   - **Log Mood** page (select + update).
   - **Journal Entry** page (compose and save to in-memory view).
   - **View Journal Entries** page (lists prior entries within the session).
-- **Social:** **Chat with Friends** screen UI scaffolded.
 - **Journal Calendar:** Calendar UI that highlights dates with journal entries (session-level/in-memory).
 
 ## Current State of Project – Sprint 2
@@ -89,7 +88,7 @@ Sprint 4 focused on deploying the full Moodsphere application (front end + back-
 This application is now live and publicly accessible at: 
 
 ```bash
-http://104.248.12.226
+http://159.203.68.83
 ```
 
 Users can register, log in, log moods, write reflections, and view their dashboard using the deployed system. 
@@ -236,10 +235,6 @@ You should see: `Moodsphere backend listening on http://localhost:5001`
 
 **Calendar**
 - `GET /api/calendar` **(Protected)** – Get all dates that have either a mood or journal entry recorded (requires valid JWT)
-
-**Chat**
-- `GET /api/chat` – Get all chat messages (mock in-memory conversation)
-- `POST /api/chat` – Post a new chat message
 
 **Reflections**
 - `GET /api/reflections` **(Protected)** – Get all reflection entries (prompt + text; requires valid JWT)
