@@ -1,25 +1,33 @@
+// Import React utilities and hooks
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import './ViewEntry.css';
 
 export default function ViewEntry() {
+  // Store all entries fetched from API
   const [entries, setEntries] = useState([]);
+  // Loading state for initial fetch
   const [loading, setLoading] = useState(true);
+  // Access and modify URL query params
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const dateFilter = searchParams.get('date'); // Get date from URL query param
+  // Read optional ?date=YYYY-MM-DD query param
+  const dateFilter = searchParams.get('date');
+  // Track selected date in local state
   const [selectedDate, setSelectedDate] = useState(dateFilter || '');
 
+  // Fetch entries from backend (optionally filtered by date)
   const fetchEntries = async () => {
     try {
       const token = localStorage.getItem('token');
 
-      // Add date parameter if filtering by date
+      // Build URL dynamically depending on whether a date filter is applied
       const url = dateFilter
         ? `/api/entries?date=${dateFilter}`
         : '/api/entries';
 
+      // Fetch entries
       const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -28,6 +36,7 @@ export default function ViewEntry() {
 
       const data = await response.json();
 
+      // Successful fetch: store entries
       if (response.ok) {
         setEntries(data.entries || []);
       } else {
@@ -36,19 +45,23 @@ export default function ViewEntry() {
     } catch (error) {
       console.error('Error fetching entries:', error);
     } finally {
+      // Stop loading spinner regardless of outcome
       setLoading(false);
     }
   };
 
+  // Refetch entries whenever the URL's date filter changes
   useEffect(() => {
     setSelectedDate(dateFilter || '');
     fetchEntries();
-  }, [dateFilter]); // Re-fetch when date filter changes
+  }, [dateFilter]);
 
+  // When user picks a new date in date input field
   const handleDateChange = (e) => {
     const newDate = e.target.value;
     setSelectedDate(newDate);
 
+    // Update URL params (keeps UI filter in sync)
     if (newDate) {
       setSearchParams({ date: newDate });
     } else {
@@ -56,6 +69,7 @@ export default function ViewEntry() {
     }
   };
 
+  // Delete a specific journal entry
   const handleDelete = async (entryId) => {
     if (!window.confirm('Are you sure you want to delete this journal entry?')) {
       return;
@@ -71,6 +85,7 @@ export default function ViewEntry() {
         },
       });
 
+      // Successful deletion → remove from UI
       if (response.ok) {
         setEntries(entries.filter(entry => entry._id !== entryId));
         alert('Entry deleted successfully!');
@@ -84,10 +99,12 @@ export default function ViewEntry() {
     }
   };
 
+  // Navigate to edit page for a specific entry
   const handleEdit = (entryId) => {
     navigate(`/journal-editor/${entryId}`);
   };
 
+  // Format entry date for display inside list
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     return date.toLocaleDateString('en-US', {
@@ -98,6 +115,7 @@ export default function ViewEntry() {
     });
   };
 
+  // Format selected filter date for UI header
   const formatFilterDate = (dateString) => {
     const date = new Date(dateString + 'T00:00:00');
     return date.toLocaleDateString('en-US', {
@@ -108,10 +126,12 @@ export default function ViewEntry() {
     });
   };
 
+  // Reset filter → removes ?date= param from URL
   const clearFilter = () => {
     navigate('/view-entry');
   };
 
+  // Show loading UI before entries are loaded
   if (loading) {
     return (
       <div className="journal-page">
@@ -126,6 +146,7 @@ export default function ViewEntry() {
     );
   }
 
+  // Main rendering of journal entries list
   return (
     <div className="journal-page">
       <div className="journal-header">
@@ -133,7 +154,7 @@ export default function ViewEntry() {
         <h2 className="journal-title">My Journal</h2>
       </div>
 
-      {/* Date Filter */}
+      {/* Date Filter UI */}
       <div style={{
         backgroundColor: 'white',
         border: '1px solid #E5E7EB',
@@ -152,6 +173,8 @@ export default function ViewEntry() {
         }}>
           Filter by date:
         </label>
+
+        {/* Native date selector that sets URL param */}
         <input
           type="date"
           value={selectedDate}
@@ -165,6 +188,8 @@ export default function ViewEntry() {
             cursor: 'pointer'
           }}
         />
+
+        {/* Clear filter button appears only when filtering */}
         {selectedDate && (
           <button
             onClick={clearFilter}
@@ -182,6 +207,8 @@ export default function ViewEntry() {
             Clear Filter
           </button>
         )}
+
+        {/* Counter + dynamic label */}
         <span style={{
           fontSize: '0.85rem',
           color: '#6B7280',
@@ -191,31 +218,44 @@ export default function ViewEntry() {
         </span>
       </div>
 
+      {/* Entries list */}
       <div className="journal-list">
+        {/* Empty state */}
         {entries.length === 0 ? (
           <div className="no-entries">
             <p>No entries found</p>
             <p className="no-entries-sub">Create your first journal entry to get started!</p>
           </div>
         ) : (
+          // Render each journal entry card
           entries.map(entry => (
             <div key={entry._id} className="journal-card">
               <div className="card-content">
+                
+                {/* Small mood square icon */}
                 <div className="mood-square bg-indigo-100">
                   <span className="mood-emoji">📔</span>
                 </div>
+
+                {/* Entry main block */}
                 <div className="card-main">
                   <div className="card-mood-row">
                     <span className="card-mood">{entry.title}</span>
                   </div>
+
+                  {/* Date displayed under title */}
                   <span className="card-date">
                     {formatDate(entry.createdAt)}
                   </span>
+
+                  {/* Truncated content preview */}
                   <div className="card-desc">
                     {entry.content.length > 150
                       ? entry.content.substring(0, 150) + '...'
                       : entry.content}
                   </div>
+
+                  {/* Edit/Delete action buttons */}
                   <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
                     <button
                       onClick={() => handleEdit(entry._id)}
@@ -232,6 +272,7 @@ export default function ViewEntry() {
                     >
                       Edit
                     </button>
+
                     <button
                       onClick={() => handleDelete(entry._id)}
                       style={{
