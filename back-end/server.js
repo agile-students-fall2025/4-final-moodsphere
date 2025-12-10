@@ -16,7 +16,12 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // -------------------- Middleware --------------------
-app.use(cors());
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json());
 
 // Centralized validation error handler
@@ -29,7 +34,6 @@ const handleValidation = (req, res, next) => {
 };
 
 // -------------------- Auth Routes --------------------
-app.use('/auth', authRoutes);
 app.use('/api/auth', authRoutes);
 
 // -------------------- Temporary In-Memory Data --------------------
@@ -287,10 +291,6 @@ app.delete('/api/reflections/:id', requireAuth, async (req, res) => {
 });
 
 // -------------------- Chat --------------------
-app.get('/api/chat', (req, res) => {
-  res.json({ messages });
-});
-
 app.post(
   '/api/chat',
   [
@@ -298,23 +298,22 @@ app.post(
     body('text').notEmpty().withMessage('Text is required')
   ],
   handleValidation,
-  async (req, res) => {
-    try {
-      const { sender, text } = req.body;
+  (req, res) => {
+    const { sender, text } = req.body;
 
-      const newMessage = await Message.create({
-        sender,
-        text,
-        time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
-      });
+    const newMessage = {
+      id: String(Date.now()),
+      sender,
+      text,
+      time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+    };
 
-      res.status(201).json(newMessage);
-    } catch (err) {
-      console.error("Error creating message:", err);
-      res.status(500).json({ error: "Failed to create message" });
-    }
+    messages.push(newMessage);
+
+    res.status(201).json(newMessage);
   }
 );
+
 
 // -------------------- Calendar --------------------
 app.get('/api/calendar', requireAuth, async (req, res) => {
@@ -355,7 +354,7 @@ if (require.main === module) {
   // Connect to MongoDB, then start the server
   connectDB().then(() => {
     app.listen(PORT, () => {
-      console.log(`Moodsphere backend listening on http://localhost:${PORT}`);
+      console.log(`Moodsphere backend listening on port ${PORT}`);
     });
   });
 }

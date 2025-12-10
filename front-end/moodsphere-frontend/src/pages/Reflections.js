@@ -19,14 +19,14 @@ export default function Reflections() {
 
       try {
         // Fetch daily prompt
-        const promptRes = await fetch('http://localhost:5001/api/reflections/prompt')
+        const promptRes = await fetch('/api/reflections/prompt')
         const promptData = await promptRes.json()
         if (promptRes.ok) {
           setPrompt(promptData.prompt)
         }
 
         // Fetch all reflections
-        const reflectionsRes = await fetch('http://localhost:5001/api/reflections', {
+        const reflectionsRes = await fetch('/api/reflections', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -62,7 +62,7 @@ export default function Reflections() {
     try {
       const token = localStorage.getItem('token')
 
-      const response = await fetch('http://localhost:5001/api/reflections', {
+      const response = await fetch('/api/reflections', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export default function Reflections() {
     try {
       const token = localStorage.getItem('token')
 
-      const response = await fetch(`http://localhost:5001/api/reflections/${id}`, {
+      const response = await fetch(`/api/reflections/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -130,30 +130,32 @@ export default function Reflections() {
 
   const isToday = (dateString) => dateString === today
 
+  if (loading) {
+    return (
+      <div className='reflections'>
+        <div className='ref-container' style={{ paddingTop: '2rem' }}>
+          <p>Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className='reflections'>
-      <div className='ref-container'>
-        {/* Header Section */}
-        <header className='ref-topbar'>
-          <div className='ref-topbar-row'>
-            <button
-              className='ref-back'
-              onClick={() => navigate('/dashboard')}
-              aria-label='Back'
-            >
-              ←
-            </button>
-            <h1 className='ref-title'>Daily Reflection</h1>
-          </div>
-        </header>
+      <header className='ref-topbar'>
+        <div className='ref-container ref-topbar-row'>
+          <button
+            className='ref-back'
+            onClick={() => navigate('/dashboard')}
+            aria-label='Back'
+          >
+            ←
+          </button>
+          <h1 className='ref-title'>Daily Reflection</h1>
+        </div>
+      </header>
 
-        {/* Main Content Area */}
-        {loading ? (
-          <div className='ref-main' style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ color: '#5a6c7d', fontSize: '1.1rem' }}>Loading...</p>
-          </div>
-        ) : (
-          <main className='ref-main'>
+      <main className='ref-container ref-main'>
         <section className='ref-card ref-card-prompt' aria-labelledby='prompt-h'>
           <h2 id='prompt-h' className='ref-card-title'>
             Today's Prompt
@@ -165,6 +167,7 @@ export default function Reflections() {
           {todayReflectionId ? 'Your Reflection (Edit)' : 'Your Reflection'}
         </h3>
         <label htmlFor='reflection' className='sr-only'>
+          Reflection text
         </label>
         <textarea
           id='reflection'
@@ -213,31 +216,30 @@ export default function Reflections() {
           </section>
         )}
 
-            <section className='ref-card ref-card--tips' aria-labelledby='tips-h'>
-              <h2 id='tips-h' className='ref-card-title'>
-                Reflection Tips:
-              </h2>
-              <ul className='ref-tips'>
-                <li>Be honest and authentic</li>
-                <li>There are no wrong answers</li>
-                <li>Take your time to think deeply</li>
-                <li>Focus on growth and learning</li>
-              </ul>
-            </section>
-          </main>
-        )}
+        <section className='ref-card ref-card--tips' aria-labelledby='tips-h'>
+          <h2 id='tips-h' className='ref-card-title'>
+            Reflection Tips:
+          </h2>
+          <ul className='ref-tips'>
+            <li>Be honest and authentic</li>
+            <li>There are no wrong answers</li>
+            <li>Take your time to think deeply</li>
+            <li>Focus on growth and learning</li>
+          </ul>
+        </section>
+      </main>
 
-        {/* Bottom Action Bar */}
-        <footer className='ref-bottom'>
+      <footer className='ref-bottom'>
+        <div className='ref-container'>
           <button
             className='ref-save'
             onClick={handleSave}
-            disabled={!value.trim() || loading}
+            disabled={!value.trim()}
           >
             {todayReflectionId ? 'Update Reflection' : 'Save Reflection'}
           </button>
-        </footer>
-      </div>
+        </div>
+      </footer>
     </div>
   )
 }

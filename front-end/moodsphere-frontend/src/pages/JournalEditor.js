@@ -16,7 +16,7 @@ export default function JournalEditor() {
       const fetchEntry = async () => {
         try {
           const token = localStorage.getItem('token');
-          const response = await fetch('http://localhost:5001/api/entries', {
+          const response = await fetch('/api/entries', {
             headers: {
               'Authorization': `Bearer ${token}`,
             },
@@ -58,8 +58,8 @@ export default function JournalEditor() {
       const token = localStorage.getItem('token');
 
       const url = isEditMode
-        ? `http://localhost:5001/api/entries/${id}`
-        : 'http://localhost:5001/api/entries';
+        ? `/api/entries/${id}`
+        : '/api/entries';
 
       const method = isEditMode ? 'PUT' : 'POST';
 
@@ -68,9 +68,9 @@ export default function JournalEditor() {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${token}`,
+},
         body: JSON.stringify(journalData),
       });
 
