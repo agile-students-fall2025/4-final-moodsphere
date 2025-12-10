@@ -5,6 +5,7 @@ Our vision is to create a digital space that empowers users to understand their 
 ## Live Deployment 
 Try Moodsphere now: 
 [Access the live deployment here](http://159.203.68.83/)
+
 Deployed on DigitalOcean with a full production-ready front-end, back-end, MongoDB Atlas database, and JWT authentication.
 
 ## Collaborators
@@ -77,6 +78,8 @@ npm install
 npm start
 ```
 
+Runs at http://localhost:3000/
+
 ### Detailed Setup
 
 #### Backend Setup
@@ -85,8 +88,8 @@ npm start
 cd back-end
 ```
 
-2. Install dependencies:
-3. ```bash
+2. Install dependencies
+```bash
 npm install
 ```
 
@@ -113,8 +116,8 @@ npm start
 cd front-end/moodsphere-frontend
 ```
 
-2. Install dependencies:
-3. ```bash
+2. Install dependencies
+```bash
 npm install
 ```
 
